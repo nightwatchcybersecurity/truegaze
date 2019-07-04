@@ -26,7 +26,7 @@ import click
 import jmespath
 import json
 import re
-from utils import get_matching_paths_from_zip
+from truegaze.utils import get_matching_paths_from_zip
 
 from pprint import pprint
 
@@ -64,10 +64,15 @@ class AdobeMobileSdkPlugin(BasePlugin):
         click.echo('-- Found ' + str(len(paths)) + ' configuration file(s)')
         for path in paths:
             click.echo('-- Scanning "' + path + "'")
+
+            # Try to parse the data
             parsed_data = AdobeMobileSdkPlugin.parse_data(self.zip_file, path)
+            if not parsed_data:
+                click.echo('---- ERROR: Unable to parse config file - will skip. File: ' + path)
+                next
 
             # Check the SSL setting
-            if AdobeMobileSdkPlugin.is_ssl_setting_vulnerable(parsed_data):
+            if not AdobeMobileSdkPlugin.is_ssl_setting_correct(parsed_data):
                 click.echo('---- FOUND: The ["analytics"]["ssl"] setting is missing or false - SSL is not being used')
 
             # Check the POI URL
@@ -94,14 +99,17 @@ class AdobeMobileSdkPlugin(BasePlugin):
     @staticmethod
     def parse_data(zip_file, path):
         data = zip_file.read(path)
-        parsed_data = json.loads(data)
+        try:
+            parsed_data = json.loads(data)
+        except json.JSONDecodeError:
+            return None
         return parsed_data
 
     # Checks if the SSL setting is present, and set to true, Otherwise, the default is false.
     @staticmethod
-    def is_ssl_setting_vulnerable(parsed_data):
+    def is_ssl_setting_correct(parsed_data):
         ssl_setting = jmespath.search('analytics.ssl', parsed_data)
-        if not ssl_setting:
+        if ssl_setting and type(ssl_setting) == bool and ssl_setting is True:
             return True
         else:
             return False
@@ -111,7 +119,7 @@ class AdobeMobileSdkPlugin(BasePlugin):
     def get_vulnerable_poi_url(parsed_data):
         poi_url = jmespath.search('remotes."analytics.poi"', parsed_data)
         if poi_url and not poi_url.strip().startswith('https://'):
-            return poi_url
+            return poi_url.strip()
         else:
             return None
 
@@ -120,7 +128,7 @@ class AdobeMobileSdkPlugin(BasePlugin):
     def get_vulnerable_messages_url(parsed_data):
         messages_url = jmespath.search('remotes.messages', parsed_data)
         if messages_url and not messages_url.strip().startswith('https://'):
-            return messages_url
+            return messages_url.strip()
         else:
             return None
 
@@ -129,8 +137,9 @@ class AdobeMobileSdkPlugin(BasePlugin):
     def get_vulnerable_postback_urls(parsed_data):
         vulnerable_urls = []
         postback_urls = jmespath.search('messages[].payload.templateurl', parsed_data)
-        for url in postback_urls:
-            if not url.strip().startswith('https://'):
-                vulnerable_urls.append(url)
+        if postback_urls:
+            for url in postback_urls:
+                if url and not url.strip().startswith('https://'):
+                    vulnerable_urls.append(url.strip())
 
         return vulnerable_urls

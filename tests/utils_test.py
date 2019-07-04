@@ -22,7 +22,7 @@
 # under the License.
 #
 import io
-from utils import *
+from truegaze.utils import *
 from zipfile import ZipFile
 
 
@@ -64,6 +64,13 @@ class TestUtils_GetAndroidManifest(object):
     def test_wrong_directory(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('assets/' + ANDROID_MANIFEST, 'manifest data')
+        assert get_android_manifest(zip_file) is None
+
+    def test_directory_with_right_name(self):
+        info = zipfile.ZipInfo('assets/' + ANDROID_MANIFEST)
+        info.external_attr = 16
+        zip_file = ZipFile(io.BytesIO(), 'a')
+        zip_file.writestr(info, '')
         assert get_android_manifest(zip_file) is None
 
     def test_valid(self):

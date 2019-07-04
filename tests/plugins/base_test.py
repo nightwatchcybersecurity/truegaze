@@ -22,29 +22,28 @@
 # under the License.
 #
 import pytest
-from truegaze.plugins import BasePlugin
+from truegaze.plugins.base import BasePlugin
 
 
 # Tests for BasePlugin
 class TestBasePlugin(object):
     def test_plugin_properties_name_desc(self):
-        plugin = BasePlugin()
+        plugin = BasePlugin({}, True, True)
         assert plugin.name.startswith('Base')
         assert plugin.desc.startswith('Base')
 
     def test_plugin_properties_support(self):
-        plugin = BasePlugin()
+        plugin = BasePlugin({}, True, True)
         assert plugin.supports_android is False
         assert plugin.supports_ios is False
 
     def test_check_support_is(self):
-        plugin = BasePlugin()
-        assert plugin.check_supported_os(False, False) is False
-        assert plugin.check_supported_os(False, True) is False
-        assert plugin.check_supported_os(True, False) is False
-        assert plugin.check_supported_os(True, True) is False
+        assert BasePlugin({}, False, False).is_os_supported() is False
+        assert BasePlugin({}, False, True).is_os_supported() is False
+        assert BasePlugin({}, True, False).is_os_supported() is False
+        assert BasePlugin({}, True, True).is_os_supported() is False
 
     def test_scan_not_implemented(self):
-        plugin = BasePlugin()
+        plugin = BasePlugin({}, True, True)
         with pytest.raises(NotImplementedError):
-            assert plugin.scan({}, True, True)
+            assert plugin.scan()
