@@ -23,8 +23,8 @@
 #
 from beautifultable import BeautifulTable
 import click
-from truegaze.plugins.adobe_mobile_sdk import AdobeMobileSdkPlugin
 import sys
+from truegaze.plugins.adobe_mobile_sdk import AdobeMobileSdkPlugin
 from truegaze.utils import *
 
 # List of active plugins - when developing a new plugin, it should be added here
