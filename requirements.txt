@@ -1,0 +1,5 @@
+###### List of python libraries required for this project ######
+## To install, run the following command:
+# pip -r requirements.txt
+
+click==7.0
