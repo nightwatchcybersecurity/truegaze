@@ -1,4 +1,6 @@
 # truegaze
+ [![Build Status](https://travis-ci.org/nightwatchcybersecurity/truegaze.svg?branch=master)](https://travis-ci.org/nightwatchcybersecurity/truegaze)
+ 
 A static analysis tool for Android and iOS applications focusing on security issues outside the
 source code such as resource strings, third party libraries and configuration files.
 
