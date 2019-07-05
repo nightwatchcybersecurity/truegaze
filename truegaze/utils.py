@@ -36,7 +36,7 @@ class TruegazeUtils(object):
     # Gets the current version
     @staticmethod
     def get_version():
-        return "0.1.1"
+        return "0.1.2"
 
     # Tries to open the application file as a ZIP file
     @staticmethod
