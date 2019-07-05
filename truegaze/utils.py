@@ -33,6 +33,11 @@ IOS_PATTERN = re.compile(r'Payload/[^/]*.\.app/Info.plist')
 
 
 class TruegazeUtils(object):
+    # Gets the current version
+    @staticmethod
+    def get_version():
+        return "0.2"
+
     # Tries to open the application file as a ZIP file
     @staticmethod
     def open_file_as_zip(filename):

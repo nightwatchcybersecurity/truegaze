@@ -1,11 +1,12 @@
 from setuptools import find_packages, setup
+from truegaze.utils import TruegazeUtils
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name='truegaze',
-    version='0.1',
+    version=TruegazeUtils.get_version(),
     description='Static analysis tool for Android/iOS apps focusing on security issues outside the source code.',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -13,7 +14,7 @@ setup(
     author='Nightwatch Cybersecurity',
     author_email='research@nightwatchcybersecurity.com',
     license='GNU',
-    packages=find_packages(),
+    packages=find_packages(exclude=["scripts.*", "scripts", "tests.*", "tests"]),
     include_package_data=True,
     install_requires=[
         'beautifultable',

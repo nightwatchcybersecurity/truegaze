@@ -35,12 +35,15 @@ To scan an application:
 truegaze scan test.apk
 truegaze scan test.ipa
 ```
+To view the installed version:
+```
+truegaze version
+```
 
 ## Sample output
 Listing modules:
 ```
-user@localhost:~/$ truegaze.py list
-
+user@localhost:~/$ truegaze list
 Total active plugins: 1
 +----------------+------------------------------------------+---------+------+
 |      Name      |               Description                | Android | iOS  |
@@ -52,8 +55,7 @@ Total active plugins: 1
 
 Scanning an application:
 ```
-user@localhost:~/$ truegaze.py scan ~/test.ipa
- 
+user@localhost:~/$ truegaze scan ~/test.ipa
 Identified as an iOS application via a manifest located at: Payload/IPAPatch-DummyApp.app/Info.plist
 Scanning using the "AdobeMobileSdk" plugin
 -- Found 1 configuration file(s)
@@ -64,6 +66,12 @@ Scanning using the "AdobeMobileSdk" plugin
 ---- FOUND: A "templateurl" in ["messages"]["payload"] doesn't use SSL: http://my.server.com/?user={user.name}&zip={user.zip}&c16={%sdkver%}&c27=cln,{a.PrevSessionLength}
 ---- FOUND: A "templateurl" in ["messages"]["payload"] doesn't use SSL: http://my.43434server.com/?user={user.name}&zip={user.zip}&c16={%sdkver%}&c27=cln,{a.PrevSessionLength}
 Done!
+```
+
+Display installed version:
+```
+user@localhost:~/$ truegaze version
+Current version: v0.2
 ```
 
 ## Structure

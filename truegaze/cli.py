@@ -32,8 +32,11 @@ from truegaze.utils import TruegazeUtils
 @click.group()
 def cli():
     """
-    A static analysis tool for Android and iOS applications focusing on security issues outside the source code
-    such as resource strings, third party libraries and configuration files
+    truegaze - A static analysis tool for Android and iOS applications focusing on security issues
+    outside the source code such as resource strings, third party libraries and configuration files.
+
+    Copyright (c) 2019 Nightwatch Cybersecurity.
+    Source code: https://github.com/nightwatchcybersecurity/truegaze
     """
 
 
@@ -90,6 +93,11 @@ def scan(filename):
             click.echo('-- OS is not supported by this plugin, skipping')
 
     click.echo("Done!")
+
+@cli.command('version')
+def version():
+    """Displays current version"""
+    click.echo("Current version: v" + TruegazeUtils.get_version())
 
 
 if __name__ == '__main__':
