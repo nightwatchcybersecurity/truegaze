@@ -4,9 +4,8 @@ dist: xenial
 language: python
 python:
   - "3.7"
-  - "3.7-dev"
-  - "3.8-dev"
-  - "nightly"
+install:
+ - pip install codecov
 script:
   - pytest --cov=truegaze/
 after_success:
