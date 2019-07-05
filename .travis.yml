@@ -1,4 +1,9 @@
+dist: xenial
 language: python
 python:
   - "3.7"
-script: pytest --cov=truegaze/
+  - "3.7-dev"
+  - "3.8-dev"
+  - "nightly"
+script:
+  - pytest --cov=truegaze/
