@@ -23,7 +23,7 @@
 #
 import pytest
 
-from truegaze.plugin_base import BasePlugin
+from truegaze.plugins.base import BasePlugin
 
 
 # Tests for BasePlugin

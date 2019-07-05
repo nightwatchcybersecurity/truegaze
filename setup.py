@@ -16,17 +16,18 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'beautifultable >= 0.7.0',
-        'click >= 7.0',
-        'jmespath >= 0.9.4'
+        'beautifultable',
+        'click',
+        'jmespath'
     ],
     extras_require={
         'test': ['pytest', 'pytest-cov'],
     },
-    entry_points='''
-        [console_scripts]
-        truegaze=truegaze.truegaze:cli
-    ''',
+    entry_points={
+        'console_scripts': [
+            'truegaze = truegaze.cli:cli'
+        ]
+    },
     classifiers=[
         'Environment :: Console',
         'Development Status :: 3 - Alpha',

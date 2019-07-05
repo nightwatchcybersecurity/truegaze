@@ -27,8 +27,8 @@ import re
 import click
 import jmespath
 
-from truegaze.plugin_base import BasePlugin
-from truegaze.truegaze_utils import TruegazeUtils
+from truegaze.plugins.base import BasePlugin
+from truegaze.utils import TruegazeUtils
 
 # Regex pattern for the configuration file
 CONFIG_FILE_PATTERN =\
@@ -58,7 +58,7 @@ class AdobeMobileSdkPlugin(BasePlugin):
 
         # Search all paths for the config file
         paths = AdobeMobileSdkPlugin.get_paths(self.zip_file)
-        if len(paths) == 0:
+        if not paths == 0:
             click.echo('-- Cannot find the "ADBMobileConfig.json" file, skipping')
             return
 
@@ -113,8 +113,8 @@ class AdobeMobileSdkPlugin(BasePlugin):
         ssl_setting = jmespath.search('analytics.ssl', parsed_data)
         if ssl_setting and type(ssl_setting) == bool and ssl_setting is True:
             return True
-        else:
-            return False
+
+        return False
 
     # Extracts and returns the POI URL if it is vulnerable
     @staticmethod
@@ -122,8 +122,8 @@ class AdobeMobileSdkPlugin(BasePlugin):
         poi_url = jmespath.search('remotes."analytics.poi"', parsed_data)
         if poi_url and not poi_url.strip().startswith('https://'):
             return poi_url.strip()
-        else:
-            return None
+
+        return None
 
     # Extracts and returns the Messages URL if it is vulnerable
     @staticmethod
@@ -131,8 +131,8 @@ class AdobeMobileSdkPlugin(BasePlugin):
         messages_url = jmespath.search('remotes.messages', parsed_data)
         if messages_url and not messages_url.strip().startswith('https://'):
             return messages_url.strip()
-        else:
-            return None
+
+        return None
 
     # Extracts and returns a list of vulnerable template URLs in the messages postbacks section.
     @staticmethod

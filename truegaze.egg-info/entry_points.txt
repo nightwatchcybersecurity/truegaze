@@ -1,4 +1,0 @@
-
-        [console_scripts]
-        truegaze=truegaze.truegaze:cli
-    

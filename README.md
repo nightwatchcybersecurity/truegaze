@@ -11,15 +11,29 @@ Python 3 is required and you can find all required modules in the **requirements
 Only tested on Python 3.7 but should work on other 3.x releases. No plans to 2.x support at
 this time.
 
+## Installation
+You can install this via PIP as follows:
+```
+pip install truegaze
+truegaze
+```
+To download and run manually, do the following:
+```
+git clone https://github.com/nightwatchcybersecurity/truegaze.git
+cd truegaze
+pip -r requirements.txt
+python -m truegaze.cli
+```
+
 ## How to use 
 To list modules:
 ```
-truegaze.py list
+truegaze list
 ```
 To scan an application:
 ```
-truegaze.py scan test.apk
-truegaze.py scan test.ipa
+truegaze scan test.apk
+truegaze scan test.ipa
 ```
 
 ## Sample output

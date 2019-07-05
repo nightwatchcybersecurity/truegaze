@@ -26,14 +26,8 @@ import sys
 import click
 from beautifultable import BeautifulTable
 
-from truegaze.plugin_adobe_mobile_sdk import AdobeMobileSdkPlugin
-from truegaze.truegaze_utils import TruegazeUtils
-
-# List of active plugins - when developing a new plugin, it should be added here
-ACTIVE_PLUGINS = [
-    AdobeMobileSdkPlugin
-]
-
+from truegaze.plugins import ACTIVE_PLUGINS
+from truegaze.utils import TruegazeUtils
 
 @click.group()
 def cli():
@@ -41,7 +35,6 @@ def cli():
     A static analysis tool for Android and iOS applications focusing on security issues outside the source code
     such as resource strings, third party libraries and configuration files
     """
-    pass
 
 
 @cli.command('list')

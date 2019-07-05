@@ -45,8 +45,8 @@ class BasePlugin(object):
     def is_os_supported(self):
         if (self.is_android and self.supports_android) or (self.is_ios and self.supports_ios):
             return True
-        else:
-            return False
+
+        return False
 
     # Main scanning method - we are passing in the ZIP file object, and various flags
     def scan(self):
