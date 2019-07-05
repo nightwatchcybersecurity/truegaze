@@ -12,9 +12,44 @@ Only tested on Python 3.7 but should work on other 3.x releases. No plans to 2.x
 this time.
 
 ## How to use 
+To list modules:
 ```
-truegaze list - to list all modules
-truegaze scan [APK or IPA file] - to scan an aplication
+truegaze.py list
+```
+To scan an application:
+```
+truegaze.py scan test.apk
+truegaze.py scan test.ipa
+```
+
+## Sample output
+Listing modules:
+```
+user@localhost:~/$ truegaze.py list
+
+Total active plugins: 1
++----------------+------------------------------------------+---------+------+
+|      Name      |               Description                | Android | iOS  |
++----------------+------------------------------------------+---------+------+
+| AdobeMobileSdk | Detection of incorrect SSL configuration |  True   | True |
+|                |         in the Adobe Mobile SDK          |         |      |
++----------------+------------------------------------------+---------+------+
+```
+
+Scanning an application:
+```
+user@localhost:~/$ truegaze.py scan ~/test.ipa
+ 
+Identified as an iOS application via a manifest located at: Payload/IPAPatch-DummyApp.app/Info.plist
+Scanning using the "AdobeMobileSdk" plugin
+-- Found 1 configuration file(s)
+-- Scanning "Payload/IPAPatch-DummyApp.app/Base.lproj/ADBMobileConfig.json'
+---- FOUND: The ["analytics"]["ssl"] setting is missing or false - SSL is not being used
+---- FOUND: The ["remotes"]["analytics.poi"] URL doesn't use SSL: http://assets.example.com/c234243g4g4rg.json
+---- FOUND: The ["remotes"]["messages"] URL doesn't use SSL: http://assets.example.com/b34343443egerg.json
+---- FOUND: A "templateurl" in ["messages"]["payload"] doesn't use SSL: http://my.server.com/?user={user.name}&zip={user.zip}&c16={%sdkver%}&c27=cln,{a.PrevSessionLength}
+---- FOUND: A "templateurl" in ["messages"]["payload"] doesn't use SSL: http://my.43434server.com/?user={user.name}&zip={user.zip}&c16={%sdkver%}&c27=cln,{a.PrevSessionLength}
+Done!
 ```
 
 ## Structure

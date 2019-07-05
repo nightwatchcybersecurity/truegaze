@@ -28,7 +28,7 @@ import click
 import jmespath
 
 from plugin_base import BasePlugin
-from utils import TruegazeUtils
+from truegaze_utils import TruegazeUtils
 
 # Regex pattern for the configuration file
 CONFIG_FILE_PATTERN =\
