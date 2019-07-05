@@ -1,6 +1,8 @@
 # truegaze
- [![Build Status](https://travis-ci.org/nightwatchcybersecurity/truegaze.svg?branch=master)](https://travis-ci.org/nightwatchcybersecurity/truegaze)
- 
+[![Build Status](https://travis-ci.org/nightwatchcybersecurity/truegaze.svg?branch=master)](https://travis-ci.org/nightwatchcybersecurity/truegaze)
+[![codecov](https://codecov.io/gh/nightwatchcybersecurity/truegaze/branch/master/graph/badge.svg)](https://codecov.io/gh/nightwatchcybersecurity/truegaze)
+
+
 A static analysis tool for Android and iOS applications focusing on security issues outside the
 source code such as resource strings, third party libraries and configuration files.
 
@@ -13,11 +15,6 @@ this time.
 ```
 truegaze list - to list all modules
 truegaze scan [APK or IPA file] - to scan an aplication
-```
-
-## Sample Output
-```
-
 ```
 
 ## Structure

@@ -1,3 +1,5 @@
+# Disable sudo to speed up the build
+sudo: false
 dist: xenial
 language: python
 python:
@@ -7,3 +9,5 @@ python:
   - "nightly"
 script:
   - pytest --cov=truegaze/
+after_success:
+- codecov
