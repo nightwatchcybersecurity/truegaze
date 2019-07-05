@@ -22,6 +22,7 @@
 # under the License.
 #
 import pytest
+
 from truegaze.plugins.base import BasePlugin
 
 

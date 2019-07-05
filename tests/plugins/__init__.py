@@ -21,5 +21,5 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-#from .base import BasePlugin
-#from .adobe_mobile_sdk import AdobeMobileSdkPlugin
+# from .base import BasePlugin
+# from .adobe_mobile_sdk import AdobeMobileSdkPlugin

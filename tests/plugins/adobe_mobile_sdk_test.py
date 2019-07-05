@@ -22,8 +22,10 @@
 # under the License.
 #
 import io
-from truegaze.plugins.adobe_mobile_sdk import AdobeMobileSdkPlugin
 from zipfile import ZipFile
+
+from truegaze.plugins.adobe_mobile_sdk import AdobeMobileSdkPlugin
+
 
 # Tests for AdobeMobileSdkPlugin
 # TODO: Add tests for click output
@@ -49,7 +51,7 @@ class TestAdobeMobileSdkPlugin(object):
 
 
 # Tests for the get_paths method
-class TestAdobeMobileSdkPlugin_GetPaths(object):
+class TestAdobeMobileSdkPluginGetPaths(object):
     def test_empty(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         paths = AdobeMobileSdkPlugin.get_paths(zip_file)
@@ -74,7 +76,7 @@ class TestAdobeMobileSdkPlugin_GetPaths(object):
 
 
 # Tests for the parse_data method
-class TestAdobeMobileSdkPlugin_ParseData(object):
+class TestAdobeMobileSdkPluginParseData(object):
     def test_empty_file(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('assets/ADBMobileConfig.json', '')
@@ -110,7 +112,7 @@ class TestAdobeMobileSdkPlugin_ParseData(object):
 
 
 # Tests for the is_ssl_setting_correct method
-class TestAdobeMobileSdkPlugin_IsSSLSettingCorrect(object):
+class TestAdobeMobileSdkPluginIsSSLSettingCorrect(object):
     def test_empty(self):
         data = {}
         assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
@@ -132,7 +134,7 @@ class TestAdobeMobileSdkPlugin_IsSSLSettingCorrect(object):
         assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
 
     def test_array(self):
-        data = {"analytics": [{"ssl": True}, {"ssl": False}] }
+        data = {"analytics": [{"ssl": True}, {"ssl": False}]}
         assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
 
     def test_empty_element(self):
@@ -143,8 +145,9 @@ class TestAdobeMobileSdkPlugin_IsSSLSettingCorrect(object):
         data = {"analytics": {"ssl": True}}
         assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is True
 
+
 # Tests for the get_vulnerable_poi_url method
-class TestAdobeMobileSdkPlugin_GetVulnerablePoiUrl(object):
+class TestAdobeMobileSdkPluginGetVulnerablePoiUrl(object):
     def test_empty(self):
         data = {}
         assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
@@ -166,7 +169,7 @@ class TestAdobeMobileSdkPlugin_GetVulnerablePoiUrl(object):
         assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
 
     def test_array(self):
-        data = {"remotes": [{"analytics.poi": 'http://www.example.com'}, {"analytics.poi1": 'http://www.example.com'}] }
+        data = {"remotes": [{"analytics.poi": 'http://www.example.com'}, {"analytics.poi1": 'http://www.example.com'}]}
         assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
 
     def test_not_vulnerable(self):
@@ -183,7 +186,7 @@ class TestAdobeMobileSdkPlugin_GetVulnerablePoiUrl(object):
 
 
 # Tests for the get_vulnerable_messages_url method
-class TestAdobeMobileSdkPlugin_GetVulnerableMessagesUrl(object):
+class TestAdobeMobileSdkPluginGetVulnerableMessagesUrl(object):
     def test_empty(self):
         data = {}
         assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
@@ -205,7 +208,7 @@ class TestAdobeMobileSdkPlugin_GetVulnerableMessagesUrl(object):
         assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
 
     def test_array(self):
-        data = {"remotes": [{"messages": 'http://www.example.com'}, {"messages1": 'http://www.example.com'}] }
+        data = {"remotes": [{"messages": 'http://www.example.com'}, {"messages1": 'http://www.example.com'}]}
         assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
 
     def test_not_vulnerable(self):
@@ -222,7 +225,7 @@ class TestAdobeMobileSdkPlugin_GetVulnerableMessagesUrl(object):
 
 
 # Tests for the get_vulnerable_postback_urls method
-class TestAdobeMobileSdkPlugin_getVulnerablePostbackUrls(object):
+class TestAdobeMobileSdkPluginGetVulnerablePostbackUrls(object):
     def test_empty(self):
         data = {}
         assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
@@ -232,42 +235,42 @@ class TestAdobeMobileSdkPlugin_getVulnerablePostbackUrls(object):
         assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
 
     def test_different_parent(self):
-        data = {"othersection": [{"payload": {"templateurl": 'http://www.example.com'}}] }
+        data = {"othersection": [{"payload": {"templateurl": 'http://www.example.com'}}]}
         assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
 
     def test_empty_payload(self):
-        data = {"messages": [{"payload": ""}] }
+        data = {"messages": [{"payload": ""}]}
         assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
 
     def test_empty_element(self):
-        data = {"messages": [{"payload": {"templateurl": ''}}] }
+        data = {"messages": [{"payload": {"templateurl": ''}}]}
         assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
 
     def test_setting_present_but_not_string(self):
-        data = {"messages": [{"payload": {"templateurl": False}}] }
+        data = {"messages": [{"payload": {"templateurl": False}}]}
         assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
 
     def test_not_vulnerable(self):
-        data = {"messages": [{"payload": {"templateurl": 'https://www.example.com'}}] }
+        data = {"messages": [{"payload": {"templateurl": 'https://www.example.com'}}]}
         assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
 
     def test_not_vulnerable_multiple(self):
         data = {"messages": [
-            {"payload": {"templateurl": 'https://www1.example.com'} },
-            {"payload": {"templateurl": 'https://www2.example.com'} }
+            {"payload": {"templateurl": 'https://www1.example.com'}},
+            {"payload": {"templateurl": 'https://www2.example.com'}}
         ]}
         assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
 
     def test_is_vulnerable(self):
-        data = {"messages": [{"payload": {"templateurl": 'http://www.example.com'}}] }
+        data = {"messages": [{"payload": {"templateurl": 'http://www.example.com'}}]}
         urls = AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)
         assert len(urls) == 1
         assert urls[0] == 'http://www.example.com'
 
     def test_is_vulnerable_some(self):
         data = {"messages": [
-            {"payload": {"templateurl": 'https://www1.example.com'} },
-            {"payload": {"templateurl": 'http://www2.example.com'} }
+            {"payload": {"templateurl": 'https://www1.example.com'}},
+            {"payload": {"templateurl": 'http://www2.example.com'}}
         ]}
         urls = AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)
         assert len(urls) == 1
@@ -275,8 +278,8 @@ class TestAdobeMobileSdkPlugin_getVulnerablePostbackUrls(object):
 
     def test_is_vulnerable_multiple(self):
         data = {"messages": [
-            {"payload": {"templateurl": 'http://www1.example.com'} },
-            {"payload": {"templateurl": 'http://www2.example.com'} }
+            {"payload": {"templateurl": 'http://www1.example.com'}},
+            {"payload": {"templateurl": 'http://www2.example.com'}}
         ]}
         urls = AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)
         assert len(urls) == 2
@@ -284,7 +287,7 @@ class TestAdobeMobileSdkPlugin_getVulnerablePostbackUrls(object):
         assert urls[1] == 'http://www2.example.com'
 
     def test_is_vulnerable_with_spaces(self):
-        data = {"messages": [{"payload": {"templateurl": '     http://www.example.com    '}}] }
+        data = {"messages": [{"payload": {"templateurl": '     http://www.example.com    '}}]}
         urls = AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)
         assert len(urls) == 1
         assert urls[0] == 'http://www.example.com'

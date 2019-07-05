@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='truegaze',
@@ -8,7 +8,7 @@ setup(
     author='Nightwatch Cybersecurity',
     author_email='research@nightwatchcybersecurity.com',
     license='GNU',
-    packages = ['truegaze'],
+    packages=['truegaze'],
     install_requires=[
         'beautifultable >= 0.7.0',
         'click >= 7.0',
@@ -17,8 +17,8 @@ setup(
     extras_require={
         'test': ['pytest', 'pytest-cov'],
     },
-    entry_points = {
-      'console_scripts': ['truegaze = truegaze:main'],
+    entry_points={
+        'console_scripts': ['truegaze = truegaze:main'],
     },
     classifiers=[
         'Environment :: Console',

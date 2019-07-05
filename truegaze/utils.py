@@ -21,7 +21,9 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-import plistlib, re, zipfile
+import plistlib
+import re
+import zipfile
 
 # Name of the Android manifest file
 ANDROID_MANIFEST = 'AndroidManifest.xml'
@@ -34,7 +36,7 @@ IOS_PATTERN = re.compile(r'Payload/[^/]*.\.app/Info.plist')
 def open_file_as_zip(filename):
     try:
         return zipfile.ZipFile(filename, 'r')
-    except (zipfile.BadZipfile, FileNotFoundError, zipfile.LargeZipFile) as e:
+    except (zipfile.BadZipfile, FileNotFoundError, zipfile.LargeZipFile):
         return None
 
 
@@ -63,8 +65,8 @@ def get_ios_manifest(zip_file):
             return None
 
         # Test to make sure some required keys are present
-        if ('CFBundleDisplayName' in plist_dic) and\
-                ('CFBundleIdentifier' in plist_dic) and\
+        if ('CFBundleDisplayName' in plist_dic) and \
+                ('CFBundleIdentifier' in plist_dic) and \
                 ('CFBundleShortVersionString' in plist_dic):
             return plist_path
 
@@ -84,4 +86,3 @@ def get_matching_paths_from_zip(zip_file, pattern, stop_after_first=False):
                 break
 
     return paths
-

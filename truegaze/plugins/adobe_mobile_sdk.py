@@ -1,4 +1,4 @@
-4#
+#
 # Copyright (c) 2019 Nightwatch Cybersecurity.
 #
 # This file is part of truegaze
@@ -21,17 +21,20 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-from .base import BasePlugin
-import click
-import jmespath
 import json
 import re
+
+import click
+import jmespath
+
 from truegaze.utils import get_matching_paths_from_zip
 
-from pprint import pprint
+from .base import BasePlugin
 
 # Regex pattern for the configuration file
-CONFIG_FILE_PATTERN = re.compile(r'assets\/ADBMobileConfig\.json|ADBMobileConfig\.json|.*/ADBMobileConfig\.json')
+CONFIG_FILE_PATTERN =\
+    re.compile(r'assets/ADBMobileConfig\.json|ADBMobileConfig\.json|.*/ADBMobileConfig\.json')
+
 
 #
 # Plugin to support detection of incorrect SSL configuration in the Adobe Mobile SDK. This plugin will not
@@ -69,7 +72,7 @@ class AdobeMobileSdkPlugin(BasePlugin):
             parsed_data = AdobeMobileSdkPlugin.parse_data(self.zip_file, path)
             if not parsed_data:
                 click.echo('---- ERROR: Unable to parse config file - will skip. File: ' + path)
-                next
+                continue
 
             # Check the SSL setting
             if not AdobeMobileSdkPlugin.is_ssl_setting_correct(parsed_data):

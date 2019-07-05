@@ -21,9 +21,11 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-from beautifultable import BeautifulTable
-import click
 import sys
+
+import click
+from beautifultable import BeautifulTable
+
 from truegaze.plugins.adobe_mobile_sdk import AdobeMobileSdkPlugin
 from truegaze.utils import *
 

@@ -22,17 +22,18 @@
 # under the License.
 #
 import io
-from truegaze.utils import *
 from zipfile import ZipFile
+
+from truegaze.utils import *
 
 
 # Tests for utils.open_file_as_zip()
-class TestUtils_OpenFileAsZip(object):
+class TestUtilsOpenFileAsZip(object):
     def test_not_found(self):
         assert open_file_as_zip('blablabla') is None
 
     def test_invalid_empty(self):
-       assert open_file_as_zip(io.BytesIO()) is None
+        assert open_file_as_zip(io.BytesIO()) is None
 
     def test_invalid_not_zip(self):
         assert open_file_as_zip(io.StringIO('foobar data')) is None
@@ -46,7 +47,7 @@ class TestUtils_OpenFileAsZip(object):
 
 
 # Tests for utils.get_android_manifest()
-class TestUtils_GetAndroidManifest(object):
+class TestUtilsGetAndroidManifest(object):
     def test_empty(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         assert get_android_manifest(zip_file) is None
@@ -80,8 +81,9 @@ class TestUtils_GetAndroidManifest(object):
 
 
 # Tests for utils.get_ios_manifest()
-class TestUtils_GetiOSManifest(object):
-    def make_ios_manifest(self):
+class TestUtilsGetiOSManifest(object):
+    @staticmethod
+    def make_ios_manifest():
         data = dict(
             CFBundleDisplayName='some app',
             CFBundleIdentifier='com.example.app',
@@ -102,17 +104,17 @@ class TestUtils_GetiOSManifest(object):
 
     def test_wrong_directory1(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
-        zip_file.writestr('Info.plist', self.make_ios_manifest())
+        zip_file.writestr('Info.plist', TestUtilsGetiOSManifest.make_ios_manifest())
         assert get_ios_manifest(zip_file) is None
 
     def test_wrong_directory2(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
-        zip_file.writestr('Payload/Info.plist', self.make_ios_manifest())
+        zip_file.writestr('Payload/Info.plist', TestUtilsGetiOSManifest.make_ios_manifest())
         assert get_ios_manifest(zip_file) is None
 
     def test_wrong_directory3(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
-        zip_file.writestr('Payload/Testapp/Info.plist', self.make_ios_manifest())
+        zip_file.writestr('Payload/Testapp/Info.plist', TestUtilsGetiOSManifest.make_ios_manifest())
         assert get_ios_manifest(zip_file) is None
 
     def test_empty_manifest(self):
@@ -155,12 +157,12 @@ class TestUtils_GetiOSManifest(object):
 
     def test_valid(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
-        zip_file.writestr('Payload/Test.app/Info.plist', self.make_ios_manifest())
+        zip_file.writestr('Payload/Test.app/Info.plist', TestUtilsGetiOSManifest.make_ios_manifest())
         assert get_ios_manifest(zip_file) == 'Payload/Test.app/Info.plist'
 
 
 # Tests for utils.get_matching_paths_from_zip()
-class TestUtils_GetMatchingPathsFromZipFile(object):
+class TestUtilsGetMatchingPathsFromZipFile(object):
     def test_empty(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         paths = get_matching_paths_from_zip(zip_file, re.compile(r'.*'))
@@ -178,7 +180,7 @@ class TestUtils_GetMatchingPathsFromZipFile(object):
         zip_file.writestr('test1.txt', '')
         zip_file.writestr('test/test2.doc', '')
         zip_file.writestr('test/test/test3.md', '')
-        paths = get_matching_paths_from_zip(zip_file, re.compile(r'.*est\/test.*\..*'))
+        paths = get_matching_paths_from_zip(zip_file, re.compile(r'.*est/test.*\..*'))
         assert len(paths) == 2
         assert paths[0] == 'test/test2.doc'
         assert paths[1] == 'test/test/test3.md'

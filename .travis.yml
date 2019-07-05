@@ -10,4 +10,4 @@ install:
 script:
   - pytest --cov=truegaze/
 after_success:
-- codecov
+  - codecov
