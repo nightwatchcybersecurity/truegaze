@@ -28,7 +28,7 @@ setup(
     ],
     python_requires='>=3.7',
     project_urls={
-        'Bug Reports': 'ttps://github.com/nightwatchcybersecurity/truegaze/issues',
+        'Bug Reports': 'https://github.com/nightwatchcybersecurity/truegaze/issues',
         'Source': 'https://github.com/nightwatchcybersecurity/truegaze',
     },
 )
