@@ -32,57 +32,61 @@ ANDROID_MANIFEST = 'AndroidManifest.xml'
 IOS_PATTERN = re.compile(r'Payload/[^/]*.\.app/Info.plist')
 
 
-# Tries to open the application file as a ZIP file
-def open_file_as_zip(filename):
-    try:
-        return zipfile.ZipFile(filename, 'r')
-    except (zipfile.BadZipfile, FileNotFoundError, zipfile.LargeZipFile):
-        return None
-
-
-# Check if this is an Android application by looking for the AndroidManifest.xml file in root, returns location
-def get_android_manifest(zip_file):
-    try:
-        file_info = zip_file.getinfo(ANDROID_MANIFEST)
-        if file_info.file_size > 0:
-            return ANDROID_MANIFEST
-    except KeyError:
-        return None
-
-
-# Check if this is an iOS application by looking for the application and its plist, returns location
-def get_ios_manifest(zip_file):
-    # IPA files have a /Payload/[something].app directory with the plist file in it, try to find it via regex
-    paths = get_matching_paths_from_zip(zip_file, IOS_PATTERN, True)
-
-    # Check if the path was found and try to parse
-    if len(paths) > 0:
-        plist_path = paths[0]
-        plist_contents = zip_file.read(plist_path)
+class TruegazeUtils(object):
+    # Tries to open the application file as a ZIP file
+    @staticmethod
+    def open_file_as_zip(filename):
         try:
-            plist_dic = plistlib.loads(plist_contents)
-        except plistlib.InvalidFileException:
+            return zipfile.ZipFile(filename, 'r')
+        except (zipfile.BadZipfile, FileNotFoundError, zipfile.LargeZipFile):
             return None
 
-        # Test to make sure some required keys are present
-        if ('CFBundleDisplayName' in plist_dic) and \
-                ('CFBundleIdentifier' in plist_dic) and \
-                ('CFBundleShortVersionString' in plist_dic):
-            return plist_path
 
-    # Otherwise, return None if not detected
-    return None
+    # Check if this is an Android application by looking for the AndroidManifest.xml file in root, returns location
+    @staticmethod
+    def get_android_manifest(zip_file):
+        try:
+            file_info = zip_file.getinfo(ANDROID_MANIFEST)
+            if file_info.file_size > 0:
+                return ANDROID_MANIFEST
+        except KeyError:
+            return None
 
 
-# Returns a list of matching paths from a ZIP file based on a regex pattern
-def get_matching_paths_from_zip(zip_file, pattern, stop_after_first=False):
-    file_list = zip_file.namelist()
-    paths = []
-    for file_path in file_list:
-        matched = pattern.match(file_path)
-        if matched is not None:
-            paths.append(matched.group())
-            if stop_after_first:
-                break
+    # Check if this is an iOS application by looking for the application and its plist, returns location
+    def get_ios_manifest(zip_file):
+        # IPA files have a /Payload/[something].app directory with the plist file in it, try to find it via regex
+        paths = TruegazeUtils.get_matching_paths_from_zip(zip_file, IOS_PATTERN, True)
 
-    return paths
+        # Check if the path was found and try to parse
+        if len(paths) > 0:
+            plist_path = paths[0]
+            plist_contents = zip_file.read(plist_path)
+            try:
+                plist_dic = plistlib.loads(plist_contents)
+            except plistlib.InvalidFileException:
+                return None
+
+            # Test to make sure some required keys are present
+            if ('CFBundleDisplayName' in plist_dic) and \
+                    ('CFBundleIdentifier' in plist_dic) and \
+                    ('CFBundleShortVersionString' in plist_dic):
+                return plist_path
+
+        # Otherwise, return None if not detected
+        return None
+
+
+    # Returns a list of matching paths from a ZIP file based on a regex pattern
+    @staticmethod
+    def get_matching_paths_from_zip(zip_file, pattern, stop_after_first=False):
+        file_list = zip_file.namelist()
+        paths = []
+        for file_path in file_list:
+            matched = pattern.match(file_path)
+            if matched is not None:
+                paths.append(matched.group())
+                if stop_after_first:
+                    break
+
+        return paths

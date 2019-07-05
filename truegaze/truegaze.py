@@ -26,8 +26,8 @@ import sys
 import click
 from beautifultable import BeautifulTable
 
-from truegaze.plugins.adobe_mobile_sdk import AdobeMobileSdkPlugin
-from truegaze.utils import *
+from plugin_adobe_mobile_sdk import AdobeMobileSdkPlugin
+from utils import TruegazeUtils
 
 # List of active plugins - when developing a new plugin, it should be added here
 ACTIVE_PLUGINS = [
@@ -63,7 +63,7 @@ def scan(filename):
     """Scan the provided file for vulnerabilities"""
 
     # Try to open the provided file as a ZIP, fail otherwise
-    zip_file = open_file_as_zip(filename)
+    zip_file = TruegazeUtils.open_file_as_zip(filename)
     if zip_file is None:
         click.echo('ERROR: Unable to open file - please check to make sure it is an APK or IPA file')
         sys.exit(-1)
@@ -71,8 +71,8 @@ def scan(filename):
     # Detect manifest
     is_android = False
     is_ios = False
-    android_manifest = get_android_manifest(zip_file)
-    ios_manifest = get_ios_manifest(zip_file)
+    android_manifest = TruegazeUtils.get_android_manifest(zip_file)
+    ios_manifest = TruegazeUtils.get_ios_manifest(zip_file)
 
     # Set flags, error out if no manifest is found
     if android_manifest:

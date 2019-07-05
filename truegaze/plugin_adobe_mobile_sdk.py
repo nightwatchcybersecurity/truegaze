@@ -27,9 +27,8 @@ import re
 import click
 import jmespath
 
-from truegaze.utils import get_matching_paths_from_zip
-
-from .base import BasePlugin
+from plugin_base import BasePlugin
+from utils import TruegazeUtils
 
 # Regex pattern for the configuration file
 CONFIG_FILE_PATTERN =\
@@ -96,7 +95,7 @@ class AdobeMobileSdkPlugin(BasePlugin):
     # Gets paths for the configuration file from the ZIP File
     @staticmethod
     def get_paths(zip_file):
-        return get_matching_paths_from_zip(zip_file, CONFIG_FILE_PATTERN)
+        return TruegazeUtils.get_matching_paths_from_zip(zip_file, CONFIG_FILE_PATTERN)
 
     # Parses the config file from a given path
     @staticmethod

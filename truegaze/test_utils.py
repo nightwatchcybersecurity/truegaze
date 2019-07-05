@@ -21,63 +21,63 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-import io
-from zipfile import ZipFile
+import io, plistlib, re
+from zipfile import ZipFile, ZipInfo
 
-from truegaze.utils import *
+from utils import ANDROID_MANIFEST, TruegazeUtils
 
 
 # Tests for utils.open_file_as_zip()
 class TestUtilsOpenFileAsZip(object):
     def test_not_found(self):
-        assert open_file_as_zip('blablabla') is None
+        assert TruegazeUtils.open_file_as_zip('blablabla') is None
 
     def test_invalid_empty(self):
-        assert open_file_as_zip(io.BytesIO()) is None
+        assert TruegazeUtils.open_file_as_zip(io.BytesIO()) is None
 
     def test_invalid_not_zip(self):
-        assert open_file_as_zip(io.StringIO('foobar data')) is None
+        assert TruegazeUtils.open_file_as_zip(io.StringIO('foobar data')) is None
 
     def test_valid_zip(self):
         zip_buffer = io.BytesIO()
         zip_file = ZipFile(zip_buffer, 'a')
         zip_file.writestr('testfile', 'testdata')
         zip_file.close()
-        assert open_file_as_zip(zip_buffer) is not None
+        assert TruegazeUtils.open_file_as_zip(zip_buffer) is not None
 
 
 # Tests for utils.get_android_manifest()
 class TestUtilsGetAndroidManifest(object):
     def test_empty(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
-        assert get_android_manifest(zip_file) is None
+        assert TruegazeUtils.get_android_manifest(zip_file) is None
 
     def test_not_empty(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr("test", 'testdata')
-        assert get_android_manifest(zip_file) is None
+        assert TruegazeUtils.get_android_manifest(zip_file) is None
 
     def test_empty_manifest(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr(ANDROID_MANIFEST, '')
-        assert get_android_manifest(zip_file) is None
+        assert TruegazeUtils.get_android_manifest(zip_file) is None
 
     def test_wrong_directory(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('assets/' + ANDROID_MANIFEST, 'manifest data')
-        assert get_android_manifest(zip_file) is None
+        assert TruegazeUtils.get_android_manifest(zip_file) is None
 
     def test_directory_with_right_name(self):
-        info = zipfile.ZipInfo('assets/' + ANDROID_MANIFEST)
+        info = ZipInfo('assets/' + ANDROID_MANIFEST)
         info.external_attr = 16
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr(info, '')
-        assert get_android_manifest(zip_file) is None
+        assert TruegazeUtils.get_android_manifest(zip_file) is None
 
     def test_valid(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr(ANDROID_MANIFEST, 'manifest data')
-        assert get_android_manifest(zip_file) == ANDROID_MANIFEST
+        assert TruegazeUtils.get_android_manifest(zip_file) == ANDROID_MANIFEST
 
 
 # Tests for utils.get_ios_manifest()
@@ -95,83 +95,83 @@ class TestUtilsGetiOSManifest(object):
 
     def test_empty(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_not_empty(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr("test", 'testdata')
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_wrong_directory1(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Info.plist', TestUtilsGetiOSManifest.make_ios_manifest())
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_wrong_directory2(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Payload/Info.plist', TestUtilsGetiOSManifest.make_ios_manifest())
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_wrong_directory3(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Payload/Testapp/Info.plist', TestUtilsGetiOSManifest.make_ios_manifest())
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_empty_manifest(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Payload/Test.app/Info.plist', '')
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_junk_manifest(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Payload/Test.app/Info.plist', '<junk></junk>')
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_manifest_with_no_keys(self):
         buffer = io.BytesIO()
         plistlib.dump({}, buffer)
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Payload/Test.app/Info.plist', buffer.getvalue())
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_manifest_with_some_keys1(self):
         buffer = io.BytesIO()
         plistlib.dump(dict(CFBundleDisplayName='some app'), buffer)
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Payload/Test.app/Info.plist', buffer.getvalue())
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_manifest_with_some_keys2(self):
         buffer = io.BytesIO()
         plistlib.dump(dict(CFBundleIdentifier='some app'), buffer)
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Payload/Test.app/Info.plist', buffer.getvalue())
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_manifest_with_some_keys3(self):
         buffer = io.BytesIO()
         plistlib.dump(dict(CFBundleShortVersionString='some app'), buffer)
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Payload/Test.app/Info.plist', buffer.getvalue())
-        assert get_ios_manifest(zip_file) is None
+        assert TruegazeUtils.get_ios_manifest(zip_file) is None
 
     def test_valid(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('Payload/Test.app/Info.plist', TestUtilsGetiOSManifest.make_ios_manifest())
-        assert get_ios_manifest(zip_file) == 'Payload/Test.app/Info.plist'
+        assert TruegazeUtils.get_ios_manifest(zip_file) == 'Payload/Test.app/Info.plist'
 
 
 # Tests for utils.get_matching_paths_from_zip()
 class TestUtilsGetMatchingPathsFromZipFile(object):
     def test_empty(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
-        paths = get_matching_paths_from_zip(zip_file, re.compile(r'.*'))
+        paths = TruegazeUtils.get_matching_paths_from_zip(zip_file, re.compile(r'.*'))
         assert len(paths) == 0
 
     def test_valid_one_file(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('test', '')
-        paths = get_matching_paths_from_zip(zip_file, re.compile(r'.*'))
+        paths = TruegazeUtils.get_matching_paths_from_zip(zip_file, re.compile(r'.*'))
         assert len(paths) == 1
         assert paths[0] == 'test'
 
@@ -180,7 +180,7 @@ class TestUtilsGetMatchingPathsFromZipFile(object):
         zip_file.writestr('test1.txt', '')
         zip_file.writestr('test/test2.doc', '')
         zip_file.writestr('test/test/test3.md', '')
-        paths = get_matching_paths_from_zip(zip_file, re.compile(r'.*est/test.*\..*'))
+        paths = TruegazeUtils.get_matching_paths_from_zip(zip_file, re.compile(r'.*est/test.*\..*'))
         assert len(paths) == 2
         assert paths[0] == 'test/test2.doc'
         assert paths[1] == 'test/test/test3.md'
@@ -188,6 +188,6 @@ class TestUtilsGetMatchingPathsFromZipFile(object):
     def test_valid_file_in_directory(self):
         zip_file = ZipFile(io.BytesIO(), 'a')
         zip_file.writestr('test/test.txt', 'testdata')
-        paths = get_matching_paths_from_zip(zip_file, re.compile(r'.*est.*\.txt'))
+        paths = TruegazeUtils.get_matching_paths_from_zip(zip_file, re.compile(r'.*est.*\.txt'))
         assert len(paths) == 1
         assert paths[0] == 'test/test.txt'
