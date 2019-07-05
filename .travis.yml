@@ -8,6 +8,6 @@ install:
   - pip install codecov
   - pip install -r requirements.txt
 script:
-  - pytest --cov=truegaze/
+  - python -m pytest --cov=truegaze/
 after_success:
   - codecov
