@@ -24,7 +24,7 @@
 import io
 from zipfile import ZipFile
 
-from plugin_adobe_mobile_sdk import AdobeMobileSdkPlugin
+from truegaze.plugin_adobe_mobile_sdk import AdobeMobileSdkPlugin
 
 
 # Tests for AdobeMobileSdkPlugin

@@ -1,0 +1,7 @@
+beautifultable>=0.7.0
+click>=7.0
+jmespath>=0.9.4
+
+[test]
+pytest
+pytest-cov

@@ -24,7 +24,7 @@
 import io, plistlib, re
 from zipfile import ZipFile, ZipInfo
 
-from truegaze_utils import ANDROID_MANIFEST, TruegazeUtils
+from truegaze.truegaze_utils import ANDROID_MANIFEST, TruegazeUtils
 
 
 # Tests for utils.open_file_as_zip()

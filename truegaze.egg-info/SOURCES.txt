@@ -1,0 +1,17 @@
+README.md
+setup.cfg
+setup.py
+truegaze/__init__.py
+truegaze/plugin_adobe_mobile_sdk.py
+truegaze/plugin_base.py
+truegaze/test_plugin_adobe_mobile_sdk.py
+truegaze/test_plugin_base.py
+truegaze/test_utils.py
+truegaze/truegaze.py
+truegaze/truegaze_utils.py
+truegaze.egg-info/PKG-INFO
+truegaze.egg-info/SOURCES.txt
+truegaze.egg-info/dependency_links.txt
+truegaze.egg-info/entry_points.txt
+truegaze.egg-info/requires.txt
+truegaze.egg-info/top_level.txt

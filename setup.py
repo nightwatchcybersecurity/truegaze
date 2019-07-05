@@ -1,14 +1,20 @@
-from setuptools import setup
+from setuptools import find_packages, setup
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup(
     name='truegaze',
     version='0.1',
     description='Static analysis tool for Android/iOS apps focusing on security issues outside the source code.',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     url='https://github.com/nightwatchcybersecurity/truegaze',
     author='Nightwatch Cybersecurity',
     author_email='research@nightwatchcybersecurity.com',
     license='GNU',
-    packages=['truegaze'],
+    packages=find_packages(),
+    include_package_data=True,
     install_requires=[
         'beautifultable >= 0.7.0',
         'click >= 7.0',
@@ -17,13 +23,15 @@ setup(
     extras_require={
         'test': ['pytest', 'pytest-cov'],
     },
-    entry_points={
-        'console_scripts': ['truegaze = truegaze:main'],
-    },
+    entry_points='''
+        [console_scripts]
+        truegaze=truegaze.truegaze:cli
+    ''',
     classifiers=[
         'Environment :: Console',
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: Apache Software License',
+        'Operating System :: OS Independent',
         'Programming Language :: Python :: 3.7',
     ],
     python_requires='>=3.7',
