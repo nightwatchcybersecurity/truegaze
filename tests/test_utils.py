@@ -27,6 +27,13 @@ from zipfile import ZipFile, ZipInfo
 from truegaze.utils import ANDROID_MANIFEST, TruegazeUtils
 
 
+# Tests for utils.get_version()
+class TestUtilsGetVersion(object):
+    def test_format_valid(self):
+        pattern = re.compile(r'^(\d+\.)?(\d+\.)?(\*|\d+)$')
+        assert pattern.match(TruegazeUtils.get_version()) is not None
+
+
 # Tests for utils.open_file_as_zip()
 class TestUtilsOpenFileAsZip(object):
     def test_not_found(self):
