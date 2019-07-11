@@ -16,14 +16,7 @@ setup(
     license='GNU',
     packages=find_packages(exclude=["scripts.*", "scripts", "tests.*", "tests"]),
     include_package_data=True,
-    install_requires=[
-        'beautifultable',
-        'click',
-        'jmespath'
-    ],
-    extras_require={
-        'test': ['pytest', 'pytest-cov'],
-    },
+    install_requires=open('requirements.txt').read().splitlines(),
     entry_points={
         'console_scripts': [
             'truegaze = truegaze.cli:cli'
