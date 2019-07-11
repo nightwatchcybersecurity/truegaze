@@ -27,6 +27,7 @@ setup(
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
     python_requires='>=3.7',

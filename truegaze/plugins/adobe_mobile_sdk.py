@@ -102,7 +102,7 @@ class AdobeMobileSdkPlugin(BasePlugin):
     def parse_data(zip_file, path):
         data = zip_file.read(path)
         try:
-            parsed_data = json.loads(data)
+            parsed_data = json.loads(data.decode())
         except json.JSONDecodeError:
             return None
         return parsed_data
