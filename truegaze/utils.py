@@ -33,23 +33,34 @@ IOS_PATTERN = re.compile(r'Payload/[^/]*.\.app/Info.plist')
 
 
 class TruegazeUtils(object):
-    # Gets the current version
+    """Various utility functions, split off from the main class for ease of unit testing"""
+
     @staticmethod
     def get_version():
+        """Gets the current version"""
         return "0.1.2"
 
-    # Tries to open the application file as a ZIP file
     @staticmethod
     def open_file_as_zip(filename):
+        """
+        Tries to open the provided file as a zipfile
+
+        :param filename: file to open
+        :return: zipfile.ZipFile
+        """
         try:
             return zipfile.ZipFile(filename, 'r')
         except (zipfile.BadZipfile, FileNotFoundError, zipfile.LargeZipFile):
             return None
 
-
-    # Check if this is an Android application by looking for the AndroidManifest.xml file in root, returns location
     @staticmethod
     def get_android_manifest(zip_file):
+        """
+        Check if this is an Android application by looking for the AndroidManifest.xml file in root
+
+        :param zip_file: zipfile.ZipFile to scan
+        :return: path to the Android manifest file
+        """
         try:
             file_info = zip_file.getinfo(ANDROID_MANIFEST)
             if file_info.file_size > 0:
@@ -57,9 +68,13 @@ class TruegazeUtils(object):
         except KeyError:
             return None
 
-
-    # Check if this is an iOS application by looking for the application and its plist, returns location
     def get_ios_manifest(zip_file):
+        """
+        Check if this is an iOS application by looking for the application and its plist
+
+        :param zip_file: zipfile.ZipFile to scan
+        :return: path to the iOS plist file
+        """
         # IPA files have a /Payload/[something].app directory with the plist file in it, try to find it via regex
         paths = TruegazeUtils.get_matching_paths_from_zip(zip_file, IOS_PATTERN, True)
 
@@ -81,10 +96,16 @@ class TruegazeUtils(object):
         # Otherwise, return None if not detected
         return None
 
-
-    # Returns a list of matching paths from a ZIP file based on a regex pattern
     @staticmethod
     def get_matching_paths_from_zip(zip_file, pattern, stop_after_first=False):
+        """
+        Searches ZIP file for list of matching paths
+
+        :param zip_file: zipfile.ZipFile to scan
+        :param pattern: regex pattern to use
+        :param stop_after_first: whether to stop once first match is found
+        :return: list of matched paths
+        """
         file_list = zip_file.namelist()
         paths = []
         for file_path in file_list:
