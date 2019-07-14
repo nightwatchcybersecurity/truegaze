@@ -101,4 +101,4 @@ def version():
 
 
 if __name__ == '__main__':
-    cli()
+    cli(progname='truegaze')
