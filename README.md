@@ -36,10 +36,6 @@ To scan an application:
 truegaze scan test.apk
 truegaze scan test.ipa
 ```
-To view the installed version:
-```
-truegaze version
-```
 
 ## Sample output
 Listing modules:

@@ -29,6 +29,8 @@ from beautifultable import BeautifulTable
 from truegaze.plugins import ACTIVE_PLUGINS
 from truegaze.utils import TruegazeUtils
 
+
+@click.version_option(version=TruegazeUtils.get_version(), prog_name='truegaze')
 @click.group()
 def cli():
     """
@@ -93,11 +95,6 @@ def scan(filename):
             click.echo('-- OS is not supported by this plugin, skipping')
 
     click.echo("Done!")
-
-@cli.command('version')
-def version():
-    """Displays current version"""
-    click.echo("Current version: v" + TruegazeUtils.get_version())
 
 
 if __name__ == '__main__':
