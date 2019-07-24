@@ -98,4 +98,4 @@ def scan(filename):
 
 
 if __name__ == '__main__':
-    cli(progname='truegaze')
+    cli(prog_name='truegaze')
