@@ -26,6 +26,7 @@ import re
 
 import click
 import jmespath
+from jsonschema.validators import validator_for
 
 from truegaze.plugins.base import BasePlugin
 from truegaze.utils import TruegazeUtils
@@ -73,24 +74,14 @@ class AdobeMobileSdkPlugin(BasePlugin):
                 click.echo('---- ERROR: Unable to parse config file - will skip. File: ' + path)
                 continue
 
-            # Check the SSL setting
-            if not AdobeMobileSdkPlugin.is_ssl_setting_correct(parsed_data):
-                click.echo('---- FOUND: The ["analytics"]["ssl"] setting is missing or false - SSL is not being used')
-
-            # Check the POI URL
-            poi_url = AdobeMobileSdkPlugin.get_vulnerable_poi_url(parsed_data)
-            if poi_url:
-                click.echo('---- FOUND: The ["remotes"]["analytics.poi"] URL doesn\'t use SSL: ' + poi_url)
-
-            # Check the messages URL
-            messages_url = AdobeMobileSdkPlugin.get_vulnerable_poi_url(parsed_data)
-            if messages_url:
-                click.echo('---- FOUND: The ["remotes"]["messages"] URL doesn\'t use SSL: ' + messages_url)
-
-            # Checking postback URLs in the messages section
-            postback_urls = AdobeMobileSdkPlugin.get_vulnerable_postback_urls(parsed_data)
-            for url in postback_urls:
-                click.echo('---- FOUND: A "templateurl" in ["messages"]["payload"] doesn\'t use SSL: ' + url)
+            # Validate the file
+            messages = AdobeMobileSdkPlugin.validate(parsed_data)
+            if len(messages) > 0:
+                click.echo("-- Found " + str(len(messages)) + ' issues')
+                for message in messages:
+                    click.echo(message)
+            else:
+                click.echo("-- No issues found")
 
     # Gets paths for the configuration file from the ZIP File
     @staticmethod
@@ -107,41 +98,19 @@ class AdobeMobileSdkPlugin(BasePlugin):
             return None
         return parsed_data
 
-    # Checks if the SSL setting is present, and set to true, Otherwise, the default is false.
+    # Validates the config file against the JSON schema
     @staticmethod
-    def is_ssl_setting_correct(parsed_data):
-        ssl_setting = jmespath.search('analytics.ssl', parsed_data)
-        if ssl_setting and type(ssl_setting) == bool and ssl_setting is True:
-            return True
+    def validate(parsed_data):
+        # Load the schema
+        schema_file = open('rules/adobe_mobile_sdk.schema', 'r')
+        schema_data = json.load(schema_file)
 
-        return False
+        # Validate the file
+        validator = validator_for(schema_data)
+        errors = validator(schema=schema_data).iter_errors(parsed_data)
 
-    # Extracts and returns the POI URL if it is vulnerable
-    @staticmethod
-    def get_vulnerable_poi_url(parsed_data):
-        poi_url = jmespath.search('remotes."analytics.poi"', parsed_data)
-        if poi_url and not poi_url.strip().startswith('https://'):
-            return poi_url.strip()
-
-        return None
-
-    # Extracts and returns the Messages URL if it is vulnerable
-    @staticmethod
-    def get_vulnerable_messages_url(parsed_data):
-        messages_url = jmespath.search('remotes.messages', parsed_data)
-        if messages_url and not messages_url.strip().startswith('https://'):
-            return messages_url.strip()
-
-        return None
-
-    # Extracts and returns a list of vulnerable template URLs in the messages postbacks section.
-    @staticmethod
-    def get_vulnerable_postback_urls(parsed_data):
-        vulnerable_urls = []
-        postback_urls = jmespath.search('messages[].payload.templateurl', parsed_data)
-        if postback_urls:
-            for url in postback_urls:
-                if url and not url.strip().startswith('https://'):
-                    vulnerable_urls.append(url.strip())
-
-        return vulnerable_urls
+        # Extract error messages and return
+        messages = []
+        for error in errors:
+            messages.append('---- ISSUE: ' + error.schema['title'] + '; ' + error.message)
+        return messages

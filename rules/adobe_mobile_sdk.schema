@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Schema for checking security settings of the Adobe Mobile SDK configuration files",
+  "required": [
+    "analytics"
+  ],
+  "properties": {
+    "analytics": {
+      "type": "object",
+      "title": "The Analytics Schema requires the SSL setting",
+      "required": [
+        "ssl"
+      ],
+      "properties": {
+        "ssl": {
+          "type": "boolean",
+          "title": "The [\"analytics\"][\"ssl\"] setting is missing or false - SSL is not being used",
+          "const": true
+        }
+      }
+    },
+    "mediaHeartbeat": {
+      "type": "object",
+      "title": "The MediaHeartbeat Schema requires the SSL setting",
+      "required": [
+        "ssl"
+      ],
+      "properties": {
+        "ssl": {
+          "type": "boolean",
+          "title": "The [\"mediaHeartbeat\"][\"ssl\"] setting is missing or false - SSL is not being used",
+          "const": true
+        }
+      }
+    },
+    "messages": {
+      "type": "array",
+      "title": "The Messages Schema",
+      "items": {
+        "type": "object",
+        "title": "The Items Schema",
+        "properties": {
+          "payload": {
+            "type": "object",
+            "title": "The Payload Schema",
+            "properties": {
+              "templateurl": {
+                "type": "string",
+                "title": "A \"templateurl\" in [\"messages\"][\"payload\"] doesn\\'t use SSL",
+                "pattern": "^https://(.*)$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "remotes": {
+      "type": "object",
+      "title": "The Remotes Schema",
+      "properties": {
+        "analytics.poi": {
+          "type": "string",
+          "title": "The [\"remotes\"][\"analytics.poi\"] URL doesn\\'t use SSL",
+          "pattern": "^https://(.*)$"
+        },
+        "messages": {
+          "type": "string",
+          "title": "The [\"remotes\"][\"messages\"] URL doesn\\'t use SSL",
+          "pattern": "^https://(.*)$"
+        }
+      }
+    }
+  }
+}

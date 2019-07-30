@@ -111,183 +111,269 @@ class TestAdobeMobileSdkPluginParseData(object):
         assert data['test2'] == 'str'
 
 
-# Tests for the is_ssl_setting_correct method
+# Testing validation - analytics / ssl setting
 class TestAdobeMobileSdkPluginIsSSLSettingCorrect(object):
     def test_empty(self):
         data = {}
-        assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: Schema for checking security settings of the Adobe Mobile SDK configuration files; \'analytics\' is a required property'
 
     def test_parent_present_setting_absent(self):
         data = {"analytics": {}}
-        assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The Analytics Schema requires the SSL setting; \'ssl\' is a required property'
 
     def test_different_parent(self):
         data = {"othersection": {"ssl": True}}
-        assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: Schema for checking security settings of the Adobe Mobile SDK configuration files; \'analytics\' is a required property'
 
     def test_setting_present_but_false(self):
         data = {"analytics": {"ssl": False}}
-        assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The ["analytics"]["ssl"] setting is missing or false - SSL is not being used; True was expected'
 
     def test_setting_present_but_not_boolean(self):
         data = {"analytics": {"ssl": "foobar"}}
-        assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 2
+        assert(messages[0]) == '---- ISSUE: The [\"analytics\"][\"ssl\"] setting is missing or false - SSL is not being used; \'foobar\' is not of type \'boolean\''
+        assert(messages[1]) == '---- ISSUE: The ["analytics"]["ssl"] setting is missing or false - SSL is not being used; True was expected'
 
     def test_array(self):
         data = {"analytics": [{"ssl": True}, {"ssl": False}]}
-        assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The Analytics Schema requires the SSL setting; [{\'ssl\': True}, {\'ssl\': False}] is not of type \'object\''
 
     def test_empty_element(self):
         data = {"analytics": {"ssl": ""}}
-        assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is False
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 2
+        assert(messages[0]) == '---- ISSUE: The ["analytics"]["ssl"] setting is missing or false - SSL is not being used; \'\' is not of type \'boolean\''
+        assert(messages[1]) == '---- ISSUE: The ["analytics"]["ssl"] setting is missing or false - SSL is not being used; True was expected'
 
     def test_valid(self):
         data = {"analytics": {"ssl": True}}
-        assert AdobeMobileSdkPlugin.is_ssl_setting_correct(data) is True
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
 
 
-# Tests for the get_vulnerable_poi_url method
-class TestAdobeMobileSdkPluginGetVulnerablePoiUrl(object):
-    def test_empty(self):
-        data = {}
-        assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
-
+# Testing validation - mediaHeartbeat / ssl setting
+class TestAdobeMobileSdkPluginIsMediaHeartbeatSSLSettingCorrect(object):
     def test_parent_present_setting_absent(self):
-        data = {"remotes": {}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
+        data = {"analytics": {"ssl": True}, "mediaHeartbeat": {}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The MediaHeartbeat Schema requires the SSL setting; \'ssl\' is a required property'
 
     def test_different_parent(self):
-        data = {"othersection": {"analytics.poi": 'http://www.example.com'}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
+        data = {"analytics": {"ssl": True}, "othersection": {"ssl": True}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
 
-    def test_empty_element(self):
-        data = {"othersection": {"analytics.poi": ''}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
+    def test_setting_present_but_false(self):
+        data = {"analytics": {"ssl": True}, "mediaHeartbeat": {"ssl": False}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The ["mediaHeartbeat"]["ssl"] setting is missing or false - SSL is not being used; True was expected'
 
-    def test_setting_present_but_not_string(self):
-        data = {"remotes": {"analytics.poi": False}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
+    def test_setting_present_but_not_boolean(self):
+        data = {"analytics": {"ssl": True}, "mediaHeartbeat": {"ssl": "foobar"}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 2
+        assert(messages[0]) == '---- ISSUE: The [\"mediaHeartbeat\"][\"ssl\"] setting is missing or false - SSL is not being used; \'foobar\' is not of type \'boolean\''
+        assert(messages[1]) == '---- ISSUE: The ["mediaHeartbeat"]["ssl"] setting is missing or false - SSL is not being used; True was expected'
 
     def test_array(self):
-        data = {"remotes": [{"analytics.poi": 'http://www.example.com'}, {"analytics.poi1": 'http://www.example.com'}]}
-        assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
-
-    def test_not_vulnerable(self):
-        data = {"remotes": {"analytics.poi": 'https://www.example.com'}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) is None
-
-    def test_is_vulnerable(self):
-        data = {"remotes": {"analytics.poi": 'http://www.example.com'}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) == 'http://www.example.com'
-
-    def test_is_vulnerable_with_spaces(self):
-        data = {"remotes": {"analytics.poi": '   http://www.example.com   '}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_poi_url(data) == 'http://www.example.com'
-
-
-# Tests for the get_vulnerable_messages_url method
-class TestAdobeMobileSdkPluginGetVulnerableMessagesUrl(object):
-    def test_empty(self):
-        data = {}
-        assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
-
-    def test_parent_present_setting_absent(self):
-        data = {"remotes": {}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
-
-    def test_different_parent(self):
-        data = {"othersection": {"messages": 'http://www.example.com'}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
+        data = {"analytics": {"ssl": True}, "mediaHeartbeat": [{"ssl": True}, {"ssl": False}]}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The MediaHeartbeat Schema requires the SSL setting; [{\'ssl\': True}, {\'ssl\': False}] is not of type \'object\''
 
     def test_empty_element(self):
-        data = {"othersection": {"messages": ''}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
+        data = {"analytics": {"ssl": True}, "mediaHeartbeat": {"ssl": ""}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 2
+        assert(messages[0]) == '---- ISSUE: The ["mediaHeartbeat"]["ssl"] setting is missing or false - SSL is not being used; \'\' is not of type \'boolean\''
+        assert(messages[1]) == '---- ISSUE: The ["mediaHeartbeat"]["ssl"] setting is missing or false - SSL is not being used; True was expected'
+
+    def test_valid(self):
+        data = {"analytics": {"ssl": True}, "mediaHeartbeat": {"ssl": True}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
+
+
+# Testing validation - remotes / analytics.poi setting
+class TestAdobeMobileSdkPluginHasVulnerablePoiUrl(object):
+    def test_parent_present_setting_absent(self):
+        data = {"analytics": {"ssl": True}, "remotes": {}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
+
+    def test_different_parent(self):
+        data = {"analytics": {"ssl": True}, "othersection": {"analytics.poi": 'http://www.example.com'}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
+
+    def test_empty_element(self):
+        data = {"analytics": {"ssl": True}, "othersection": {"analytics.poi": ''}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
 
     def test_setting_present_but_not_string(self):
-        data = {"remotes": {"messages": False}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
+        data = {"analytics": {"ssl": True}, "remotes": {"analytics.poi": False}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The ["remotes"]["analytics.poi"] URL doesn\\\'t use SSL; False is not of type \'string\''
 
     def test_array(self):
-        data = {"remotes": [{"messages": 'http://www.example.com'}, {"messages1": 'http://www.example.com'}]}
-        assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
+        data = {"analytics": {"ssl": True}, "remotes": [
+            {"analytics.poi": 'http://www.example.com'},
+            {"analytics.poi1": 'http://www.example.com'}
+        ]}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The Remotes Schema; [{\'analytics.poi\': \'http://www.example.com\'}, {\'analytics.poi1\': \'http://www.example.com\'}] is not of type \'object\''
 
     def test_not_vulnerable(self):
-        data = {"remotes": {"messages": 'https://www.example.com'}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) is None
+        data = {"analytics": {"ssl": True}, "remotes": {"analytics.poi": 'https://www.example.com'}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
 
     def test_is_vulnerable(self):
-        data = {"remotes": {"messages": 'http://www.example.com'}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) == 'http://www.example.com'
+        data = {"analytics": {"ssl": True}, "remotes": {"analytics.poi": 'http://www.example.com'}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The ["remotes"]["analytics.poi"] URL doesn\\\'t use SSL; \'http://www.example.com\' does not match \'^https://(.*)$\''
 
     def test_is_vulnerable_with_spaces(self):
-        data = {"remotes": {"messages": '   http://www.example.com   '}}
-        assert AdobeMobileSdkPlugin.get_vulnerable_messages_url(data) == 'http://www.example.com'
+        data = {"analytics": {"ssl": True}, "remotes": {"analytics.poi": '   http://www.example.com   '}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The ["remotes"]["analytics.poi"] URL doesn\\\'t use SSL; \'   http://www.example.com   \' does not match \'^https://(.*)$\''
 
 
-# Tests for the get_vulnerable_postback_urls method
-class TestAdobeMobileSdkPluginGetVulnerablePostbackUrls(object):
-    def test_empty(self):
-        data = {}
-        assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
-
+# Testing validation - remotes / messages setting
+class TestAdobeMobileSdkPluginHasVulnerableMessagesUrl(object):
     def test_parent_present_setting_absent(self):
-        data = {"messages": []}
-        assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
+        data = {"analytics": {"ssl": True}, "remotes": {}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
 
     def test_different_parent(self):
-        data = {"othersection": [{"payload": {"templateurl": 'http://www.example.com'}}]}
-        assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
-
-    def test_empty_payload(self):
-        data = {"messages": [{"payload": ""}]}
-        assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
+        data = {"analytics": {"ssl": True}, "othersection": {"messages": 'http://www.example.com'}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
 
     def test_empty_element(self):
-        data = {"messages": [{"payload": {"templateurl": ''}}]}
-        assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
+        data = {"analytics": {"ssl": True}, "othersection": {"messages": ''}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
 
     def test_setting_present_but_not_string(self):
-        data = {"messages": [{"payload": {"templateurl": False}}]}
-        assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
+        data = {"analytics": {"ssl": True}, "remotes": {"messages": False}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The ["remotes"]["messages"] URL doesn\\\'t use SSL; False is not of type \'string\''
+
+    def test_array(self):
+        data = {"analytics": {"ssl": True}, "remotes": [
+            {"messages": 'http://www.example.com'},
+            {"messages1": 'http://www.example.com'}
+        ]}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The Remotes Schema; [{\'messages\': \'http://www.example.com\'}, {\'messages1\': \'http://www.example.com\'}] is not of type \'object\''
 
     def test_not_vulnerable(self):
-        data = {"messages": [{"payload": {"templateurl": 'https://www.example.com'}}]}
-        assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
+        data = {"analytics": {"ssl": True}, "remotes": {"messages": 'https://www.example.com'}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
+
+    def test_is_vulnerable(self):
+        data = {"analytics": {"ssl": True}, "remotes": {"messages": 'http://www.example.com'}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The ["remotes"]["messages"] URL doesn\\\'t use SSL; \'http://www.example.com\' does not match \'^https://(.*)$\''
+
+    def test_is_vulnerable_with_spaces(self):
+        data = {"analytics": {"ssl": True}, "remotes": {"messages": '   http://www.example.com   '}}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: The ["remotes"]["messages"] URL doesn\\\'t use SSL; \'   http://www.example.com   \' does not match \'^https://(.*)$\''
+
+
+# Testing validation - vulnerable postback URLs
+class TestAdobeMobileSdkPluginHasVulnerablePostbackUrls(object):
+    def test_parent_present_setting_absent(self):
+        data = {"analytics": {"ssl": True}, "messages": []}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
+
+    def test_different_parent(self):
+        data = {"analytics": {"ssl": True}, "othersection": [{"payload": {"templateurl": 'http://www.example.com'}}]}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
+
+    def test_empty_element(self):
+        data = {"analytics": {"ssl": True}, "messages": [{"payload": {"templateurl": ''}}]}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: A "templateurl" in ["messages"]["payload"] doesn\\\'t use SSL; \'\' does not match \'^https://(.*)$\''
+
+    def test_setting_present_but_not_string(self):
+        data = {"analytics": {"ssl": True}, "messages": [{"payload": {"templateurl": False}}]}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: A "templateurl" in ["messages"]["payload"] doesn\\\'t use SSL; False is not of type \'string\''
+
+    def test_not_vulnerable(self):
+        data = {"analytics": {"ssl": True}, "messages": [{"payload": {"templateurl": 'https://www.example.com'}}]}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
 
     def test_not_vulnerable_multiple(self):
-        data = {"messages": [
+        data = {"analytics": {"ssl": True}, "messages": [
             {"payload": {"templateurl": 'https://www1.example.com'}},
             {"payload": {"templateurl": 'https://www2.example.com'}}
         ]}
-        assert len(AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)) == 0
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 0
 
     def test_is_vulnerable(self):
-        data = {"messages": [{"payload": {"templateurl": 'http://www.example.com'}}]}
-        urls = AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)
-        assert len(urls) == 1
-        assert urls[0] == 'http://www.example.com'
+        data = {"analytics": {"ssl": True}, "messages": [{"payload": {"templateurl": 'http://www.example.com'}}]}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: A "templateurl" in ["messages"]["payload"] doesn\\\'t use SSL; \'http://www.example.com\' does not match \'^https://(.*)$\''
 
     def test_is_vulnerable_some(self):
-        data = {"messages": [
+        data = {"analytics": {"ssl": True}, "messages": [
             {"payload": {"templateurl": 'https://www1.example.com'}},
             {"payload": {"templateurl": 'http://www2.example.com'}}
         ]}
-        urls = AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)
-        assert len(urls) == 1
-        assert urls[0] == 'http://www2.example.com'
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: A "templateurl" in ["messages"]["payload"] doesn\\\'t use SSL; \'http://www2.example.com\' does not match \'^https://(.*)$\''
 
     def test_is_vulnerable_multiple(self):
-        data = {"messages": [
+        data = {"analytics": {"ssl": True}, "messages": [
             {"payload": {"templateurl": 'http://www1.example.com'}},
             {"payload": {"templateurl": 'http://www2.example.com'}}
         ]}
-        urls = AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)
-        assert len(urls) == 2
-        assert urls[0] == 'http://www1.example.com'
-        assert urls[1] == 'http://www2.example.com'
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 2
+        assert(messages[0]) == '---- ISSUE: A "templateurl" in ["messages"]["payload"] doesn\\\'t use SSL; \'http://www1.example.com\' does not match \'^https://(.*)$\''
+        assert(messages[1]) == '---- ISSUE: A "templateurl" in ["messages"]["payload"] doesn\\\'t use SSL; \'http://www2.example.com\' does not match \'^https://(.*)$\''
 
     def test_is_vulnerable_with_spaces(self):
-        data = {"messages": [{"payload": {"templateurl": '     http://www.example.com    '}}]}
-        urls = AdobeMobileSdkPlugin.get_vulnerable_postback_urls(data)
-        assert len(urls) == 1
-        assert urls[0] == 'http://www.example.com'
+        data = {"analytics": {"ssl": True}, "messages": [{
+            "payload": {"templateurl": '     http://www.example.com    '}
+        }]}
+        messages = AdobeMobileSdkPlugin.validate(data)
+        assert len(messages) == 1
+        assert(messages[0]) == '---- ISSUE: A "templateurl" in ["messages"]["payload"] doesn\\\'t use SSL; \'     http://www.example.com    \' does not match \'^https://(.*)$\''
