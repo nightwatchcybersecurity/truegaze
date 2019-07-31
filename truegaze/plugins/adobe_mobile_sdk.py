@@ -25,7 +25,6 @@ import json
 import re
 
 import click
-import jmespath
 from jsonschema.validators import validator_for
 
 from truegaze.plugins.base import BasePlugin
