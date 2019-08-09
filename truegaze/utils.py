@@ -25,6 +25,8 @@ import plistlib
 import re
 import zipfile
 
+from OpenSSL import crypto
+
 # Name of the Android manifest file
 ANDROID_MANIFEST = 'AndroidManifest.xml'
 
@@ -116,3 +118,31 @@ class TruegazeUtils(object):
                     break
 
         return paths
+
+    # Gets certificates from a PKCS7 object, from this pull request:
+    # https://github.com/pyca/pyopenssl/pull/367
+    # TODO: Remove once this functionality gets added to OpenSSL
+    @staticmethod
+    def get_certificates_from_pkcs7(self):
+        """
+        Returns all certificates for the PKCS7 structure, if present. Only
+        objects of type *signed* or *signed and enveloped* can embed
+        certificates.
+        :return: The certificates in the PKCS7, or ``None`` if
+            there are none.
+        :rtype: :class:`tuple` of :class:`X509` or ``None``
+        """
+        certs = crypto._ffi.NULL
+        if self.type_is_signed():
+            certs = self._pkcs7.d.sign.cert
+        elif self.type_is_signedAndEnveloped():
+            certs = self._pkcs7.d.signed_and_enveloped.cert
+
+        pycerts = []
+        for i in range(crypto._lib.sk_X509_num(certs)):
+            x509 = crypto._ffi.gc(crypto._lib.X509_dup(crypto._lib.sk_X509_value(certs, i)),
+                           crypto._lib.X509_free)
+            pycert = crypto.X509._from_raw_x509_ptr(x509)
+            pycerts.append(pycert)
+        if pycerts:
+            return tuple(pycerts)

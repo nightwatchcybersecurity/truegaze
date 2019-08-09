@@ -5,5 +5,7 @@
 beautifultable>=0.7.0
 click>=7.0
 jsonschema>=3.0.1
+pyopenssl>=19.0.0
 pytest>=5.0.0
 pytest-cov>=2.7.1
+roca-detect>=1.2.12

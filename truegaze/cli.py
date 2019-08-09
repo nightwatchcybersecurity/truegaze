@@ -85,11 +85,13 @@ def scan(filename):
 
     # Pass the filename to the individual modules for scanning
     for PLUGIN in ACTIVE_PLUGINS:
+        click.echo()
         click.echo('Scanning using the "' + PLUGIN.name + '" plugin')
         instance = PLUGIN(zip_file, is_android, is_ios)
 
         # Show error if OS is not supported
-        if instance.is_os_supported:
+        # TODO: Add tests
+        if instance.is_os_supported():
             instance.scan()
         else:
             click.echo('-- OS is not supported by this plugin, skipping')
