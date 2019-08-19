@@ -90,13 +90,13 @@ class WeakKeyPlugin(BasePlugin):
     def check_for_short_keys(certs):
         messages = []
         for cert in certs:
-            # Check for small key size (DSA and RSA only, ECC keys are usually small)
-            if cert.public_key.algorithm == 'rsa' or cert.public_key.algorithm == 'dsa':
-                if cert.public_key.bit_size < 2048:
-                    messages.append('---- ISSUE (' +
-                                    'algorithm: ' + cert.public_key.algorithm +
-                                    ', fingerprint: ' + cert.sha1_fingerprint.replace(' ', '') +
-                                    '): Key is less than 2048 bits, size is ' + str(cert.public_key.bit_size) + ' bits')
+            if (cert.public_key.algorithm == 'rsa' and cert.public_key.bit_size < 2048) or \
+                    (cert.public_key.algorithm == 'dsa' and cert.public_key.bit_size < 2048) or \
+                    (cert.public_key.algorithm == 'ecdsa' and cert.public_key.bit_size < 224):
+                messages.append('---- ISSUE (' +
+                                'algorithm: ' + cert.public_key.algorithm +
+                                ', fingerprint: ' + cert.sha1_fingerprint.replace(' ', '') +
+                                '): Key is less than 2048 bits, size is ' + str(cert.public_key.bit_size) + ' bits')
         return messages
 
     # Check for ROCA attacks
