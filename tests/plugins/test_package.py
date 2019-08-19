@@ -28,6 +28,6 @@ from truegaze.plugins.adobe_mobile_sdk import AdobeMobileSdkPlugin
 # Tests for the package itself
 class TestPluginsPackage(object):
     def test_active_plugins(self):
-        assert len(ACTIVE_PLUGINS) == 1
+        assert len(ACTIVE_PLUGINS) == 2
         assert BasePlugin not in ACTIVE_PLUGINS
         assert AdobeMobileSdkPlugin in ACTIVE_PLUGINS

@@ -50,11 +50,15 @@ class AdobeMobileSdkPlugin(BasePlugin):
     desc = 'Detection of incorrect SSL configuration\nin the Adobe Mobile SDK'
     supports_android = True
     supports_ios = True
+    zip_file = None
 
     # Main scanning method
     def scan(self):
         # On Android, the config file is usually in the assets folder but can be placed elsewhere.
         # On iOS the configuration file can be anywhere.
+
+        # Load file
+        self.zip_file = TruegazeUtils.open_file_as_zip(self.filename)
 
         # Search all paths for the config file
         paths = AdobeMobileSdkPlugin.get_paths(self.zip_file)

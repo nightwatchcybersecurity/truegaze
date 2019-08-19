@@ -87,7 +87,7 @@ def scan(filename):
     for PLUGIN in ACTIVE_PLUGINS:
         click.echo()
         click.echo('Scanning using the "' + PLUGIN.name + '" plugin')
-        instance = PLUGIN(zip_file, is_android, is_ios)
+        instance = PLUGIN(filename, is_android, is_ios)
 
         # Show error if OS is not supported
         # TODO: Add tests

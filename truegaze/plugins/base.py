@@ -36,8 +36,8 @@ class BasePlugin(object):
     supports_ios = False
 
     # Main constructor
-    def __init__(self, zip_file, is_android, is_ios):
-        self.zip_file = zip_file
+    def __init__(self, filename, is_android, is_ios):
+        self.filename = filename
         self.is_android = is_android
         self.is_ios = is_ios
 
@@ -48,6 +48,6 @@ class BasePlugin(object):
 
         return False
 
-    # Main scanning method - we are passing in the ZIP file object, and various flags
+    # Main scanning method
     def scan(self):
         raise NotImplementedError('Scanning functionality not implemented')
