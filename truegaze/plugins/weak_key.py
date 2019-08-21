@@ -60,9 +60,9 @@ class WeakKeyPlugin(BasePlugin):
         messages.extend(WeakKeyPlugin.check_for_roca(unique_certs))
 
         # Check for weak DSA signatures
-        signatures = WeakKeyPlugin.get_dsa_signatures(apk)
+        signatures = WeakKeyPlugin.get_signatures(apk)
         if len(signatures) > 1:
-            messages = WeakKeyPlugin.check_for_weak_dsa_signatures(signatures)
+            messages = WeakKeyPlugin.check_for_weak_signatures(signatures)
 
         # Show results if needed
         if len(messages) > 0:
@@ -87,27 +87,27 @@ class WeakKeyPlugin(BasePlugin):
 
         return unique_certs.values()
 
-    # Get a list of DSA signatures from the APK file
+    # Get a list of DSA/ECDSA signatures from the APK file
     # TODO: add tests
     @staticmethod
-    def get_dsa_signatures(apk):
+    def get_signatures(apk):
         signatures = list()
         certs_v1 = apk.get_certificates_v1()
         for x in range(len(certs_v1)):
-            if certs_v1[x].public_key.algorithm == 'dsa':
+            if certs_v1[x].public_key.algorithm == 'dsa' or certs_v1[x].public_key.algorithm == 'ecdsa':
                 data = cms.ContentInfo.load(apk.get_signatures()[x])
                 signatures.append(data['content']['signer_infos'][0]['signature'].contents)
 
         if apk._is_signed_v2:
             certs_v2 = apk.get_certificates_v2()
             for x in range(len(certs_v2)):
-                if certs_v2[x].public_key.algorithm == 'dsa':
+                if certs_v2[x].public_key.algorithm == 'dsa' or certs_v1[x].public_key.algorithm == 'ecdsa':
                     signatures.append(apk._v2_signing_data[x].signatures[0][1])
 
         if apk._is_signed_v3:
             certs_v3 = apk.get_certificates_v3()
             for x in range(len(certs_v3)):
-                if certs_v3[x].public_key.algorithm == 'dsa':
+                if certs_v3[x].public_key.algorithm == 'dsa' or certs_v1[x].public_key.algorithm == 'ecdsa':
                     signatures.append(apk._v3_signing_data[x].signatures[0][1])
 
         return signatures
@@ -143,10 +143,10 @@ class WeakKeyPlugin(BasePlugin):
 
         return messages
 
-    # Check for weak DSA signatures
+    # Check for weak DSA/ECDSA signatures
     # TODO: add tests
     @staticmethod
-    def check_for_weak_dsa_signatures(signatures):
+    def check_for_weak_signatures(signatures):
         messages = []
 
         # Extra r values from signatures
