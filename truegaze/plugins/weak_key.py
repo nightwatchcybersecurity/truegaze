@@ -24,20 +24,19 @@
 import re
 
 from androguard.core.bytecodes.apk import APK
+from asn1crypto import cms
+from cryptography.hazmat.primitives.asymmetric import utils
 import click
 from roca.detect import RocaFingerprinter as Roca
 
 from truegaze.plugins.base import BasePlugin
-from truegaze.utils import TruegazeUtils
 
 # Regex pattern for the configuration file
 CERTIFICATE_FILE_PATTERN =\
     re.compile(r'META-INF/.*\.RSA|META-INF/.*\.DSA')
 
 
-#
-# Plugin to support weak Android signing keys
-#
+# Plugin to check for weak Android signing keys and signatures
 class WeakKeyPlugin(BasePlugin):
     name = 'WeakKeyPlugin'
     desc = 'Detection of weak Android signing keys'
@@ -55,10 +54,17 @@ class WeakKeyPlugin(BasePlugin):
             click.echo('-- Cannot find the any certificates in the APK File, skipping')
             return
 
-        # Loop through the certificates and validate
+        # Loop through the certificates and check for weak keys
         messages = list()
         messages.extend(WeakKeyPlugin.check_for_short_keys(unique_certs))
         messages.extend(WeakKeyPlugin.check_for_roca(unique_certs))
+
+        # Check for weak DSA signatures
+        signatures = WeakKeyPlugin.get_dsa_signatures(apk)
+        if len(signatures) > 1:
+            messages = WeakKeyPlugin.check_for_weak_dsa_signatures(signatures)
+
+        # Show results if needed
         if len(messages) > 0:
             click.echo("-- Found " + str(len(messages)) + ' issues')
             for message in messages:
@@ -66,12 +72,8 @@ class WeakKeyPlugin(BasePlugin):
         else:
             click.echo("-- No issues found")
 
-    # Gets paths for the certificate files from the ZIP File
-    @staticmethod
-    def get_paths(zip_file):
-        return TruegazeUtils.get_matching_paths_from_zip(zip_file, CERTIFICATE_FILE_PATTERN)
-
     # Get a list of certificates from the apk
+    # TODO: add tests
     @staticmethod
     def get_certificates(apk):
         all_certs = list()
@@ -85,7 +87,33 @@ class WeakKeyPlugin(BasePlugin):
 
         return unique_certs.values()
 
+    # Get a list of DSA signatures from the APK file
+    # TODO: add tests
+    @staticmethod
+    def get_dsa_signatures(apk):
+        signatures = list()
+        certs_v1 = apk.get_certificates_v1()
+        for x in range(len(certs_v1)):
+            if certs_v1[x].public_key.algorithm == 'dsa':
+                data = cms.ContentInfo.load(apk.get_signatures()[x])
+                signatures.append(data['content']['signer_infos'][0]['signature'].contents)
+
+        if apk._is_signed_v2:
+            certs_v2 = apk.get_certificates_v2()
+            for x in range(len(certs_v2)):
+                if certs_v2[x].public_key.algorithm == 'dsa':
+                    signatures.append(apk._v2_signing_data[x].signatures[0][1])
+
+        if apk._is_signed_v3:
+            certs_v3 = apk.get_certificates_v3()
+            for x in range(len(certs_v3)):
+                if certs_v3[x].public_key.algorithm == 'dsa':
+                    signatures.append(apk._v3_signing_data[x].signatures[0][1])
+
+        return signatures
+
     # Check for short keys
+    # TODO: add tests
     @staticmethod
     def check_for_short_keys(certs):
         messages = []
@@ -100,6 +128,7 @@ class WeakKeyPlugin(BasePlugin):
         return messages
 
     # Check for ROCA attacks
+    # TODO: add tests
     @staticmethod
     def check_for_roca(certs):
         messages = []
@@ -114,3 +143,21 @@ class WeakKeyPlugin(BasePlugin):
 
         return messages
 
+    # Check for weak DSA signatures
+    # TODO: add tests
+    @staticmethod
+    def check_for_weak_dsa_signatures(signatures):
+        messages = []
+
+        # Extra r values from signatures
+        values = list()
+        for signature in signatures:
+            (r, s) = utils.decode_dss_signature(signature)
+            values.append(r)
+
+        # Check if any appear more than once
+        for r in values:
+            if values.count(r) > 1:
+                messages.append('---- ISSUE: DSA "r" value occurs more than once, private key is recoverable; k = ' + r)
+
+        return messages
