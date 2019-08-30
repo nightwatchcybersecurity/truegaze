@@ -56,45 +56,48 @@ def list_plugins():
 
 
 @cli.command('scan')
-@click.argument('filename', type=click.Path(exists=True, dir_okay=False))
-def scan(filename):
-    """Scan the provided file for vulnerabilities"""
+@click.argument('filenames', nargs=-1, type=click.Path(exists=True, dir_okay=False))
+def scan(filenames):
+    """Scan the provided files for vulnerabilities"""
 
-    # Try to open the provided file as a ZIP, fail otherwise
-    zip_file = TruegazeUtils.open_file_as_zip(filename)
-    if zip_file is None:
-        click.echo('ERROR: Unable to open file - please check to make sure it is an APK or IPA file')
-        sys.exit(-1)
+    for filename in filenames:
+        click.echo('\nProcessing file: ' + filename)
 
-    # Detect manifest
-    is_android = False
-    is_ios = False
-    android_manifest = TruegazeUtils.get_android_manifest(zip_file)
-    ios_manifest = TruegazeUtils.get_ios_manifest(zip_file)
+        # Try to open the provided file as a ZIP, fail otherwise
+        zip_file = TruegazeUtils.open_file_as_zip(filename)
+        if zip_file is None:
+            click.echo('ERROR: Unable to open file - please check to make sure it is an APK or IPA file')
+            sys.exit(-1)
 
-    # Set flags, error out if no manifest is found
-    if android_manifest:
-        click.echo('Identified as an Android application via a manifest located at: ' + android_manifest)
-        is_android = True
-    elif ios_manifest:
-        click.echo('Identified as an iOS application via a manifest located at: ' + ios_manifest)
-        is_ios = True
-    else:
-        click.echo('ERROR: Unable to identify the file as an Android or iOS application')
-        sys.exit(-2)
+        # Detect manifest
+        is_android = False
+        is_ios = False
+        android_manifest = TruegazeUtils.get_android_manifest(zip_file)
+        ios_manifest = TruegazeUtils.get_ios_manifest(zip_file)
 
-    # Pass the filename to the individual modules for scanning
-    for PLUGIN in ACTIVE_PLUGINS:
-        click.echo()
-        click.echo('Scanning using the "' + PLUGIN.name + '" plugin')
-        instance = PLUGIN(filename, is_android, is_ios)
-
-        # Show error if OS is not supported
-        # TODO: Add tests
-        if instance.is_os_supported():
-            instance.scan()
+        # Set flags, error out if no manifest is found
+        if android_manifest:
+            click.echo('Identified as an Android application via a manifest located at: ' + android_manifest)
+            is_android = True
+        elif ios_manifest:
+            click.echo('Identified as an iOS application via a manifest located at: ' + ios_manifest)
+            is_ios = True
         else:
-            click.echo('-- OS is not supported by this plugin, skipping')
+            click.echo('ERROR: Unable to identify the file as an Android or iOS application')
+            sys.exit(-2)
+
+        # Pass the filename to the individual modules for scanning
+        for PLUGIN in ACTIVE_PLUGINS:
+            click.echo()
+            click.echo('Scanning using the "' + PLUGIN.name + '" plugin')
+            instance = PLUGIN(filename, is_android, is_ios)
+
+            # Show error if OS is not supported
+            # TODO: Add tests
+            if instance.is_os_supported():
+                instance.scan()
+            else:
+                click.echo('-- OS is not supported by this plugin, skipping')
 
     click.echo("Done!")
 
