@@ -68,6 +68,7 @@ class TruegazeUtils(object):
         except KeyError:
             return None
 
+    @staticmethod
     def get_ios_manifest(zip_file):
         """
         Check if this is an iOS application by looking for the application and its plist

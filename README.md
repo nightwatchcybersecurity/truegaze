@@ -36,18 +36,25 @@ To scan an application:
 truegaze scan test.apk
 truegaze scan test.ipa
 ```
+To scan multiple applications:
+```
+truegaze scan *.apk
+truegaze scan *.ipa
+```
 
 ## Sample output
 Listing modules:
 ```
 user@localhost:~/$ truegaze list
-Total active plugins: 1
-+----------------+------------------------------------------+---------+------+
-|      Name      |               Description                | Android | iOS  |
-+----------------+------------------------------------------+---------+------+
-| AdobeMobileSdk | Detection of incorrect SSL configuration |  True   | True |
-|                |         in the Adobe Mobile SDK          |         |      |
-+----------------+------------------------------------------+---------+------+
+Total active plugins: 2
++----------------+------------------------------------------+---------+-------+
+|      Name      |               Description                | Android | iOS   |
++----------------+------------------------------------------+---------+-------+
+| AdobeMobileSdk | Detection of incorrect SSL configuration |  True   | True  |
+|                |         in the Adobe Mobile SDK          |         |       |
++----------------+------------------------------------------+---------+-------+
+| WeakKeyPlugin  | Detection of weak Android signing keys   |  True   | False |
++----------------+------------------------------------------+---------+-------+
 ```
 
 Scanning an application:
