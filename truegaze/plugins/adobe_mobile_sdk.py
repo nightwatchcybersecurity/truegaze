@@ -63,7 +63,7 @@ class AdobeMobileSdkPlugin(BasePlugin):
         # Search all paths for the config file
         paths = AdobeMobileSdkPlugin.get_paths(self.zip_file)
         if len(paths) == 0:
-            click.echo('-- Cannot find the "ADBMobileConfig.json" file, skipping')
+            click.echo('-- No Adobe integration in this application (no "ADBMobileConfig.json" file); skipping test')
             return
 
         # Loop through files, parse the JSON and analyze
