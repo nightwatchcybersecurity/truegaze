@@ -32,18 +32,39 @@
 class BasePlugin(object):
     name = 'Base Plugin'
     desc = 'Base class used for all other plugins, do not access directly'
+
+    # Whether scanning of Android files is supported
     supports_android = False
+
+    # Whether scanning of iOS files is supported
     supports_ios = False
 
-    # Main constructor
-    def __init__(self, filename, is_android, is_ios):
+    # Whether supports online tests
+    supports_online = False
+
+    def __init__(self, filename, is_android, is_ios, do_online):
+        # Main constructor
+        #
+        # :param filename: Filename to scan
+        # :param is_android: Whether the provided file is an Android application
+        # :param is_ios: Whether the provided is an iOS application
+        # :param do_online: Whether online tests should be performed
+        #
         self.filename = filename
         self.is_android = is_android
         self.is_ios = is_ios
+        self.do_online = do_online
 
     # Utility method used to check if this plugin supports a given OS
     def is_os_supported(self):
         if (self.is_android and self.supports_android) or (self.is_ios and self.supports_ios):
+            return True
+
+        return False
+
+    # Utility method used to check if this plugin supports online tests
+    def is_online_testing_supported(self):
+        if self.do_online and self.supports_online:
             return True
 
         return False

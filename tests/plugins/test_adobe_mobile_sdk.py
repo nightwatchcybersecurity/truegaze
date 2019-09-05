@@ -31,23 +31,30 @@ from truegaze.plugins.adobe_mobile_sdk import AdobeMobileSdkPlugin
 # TODO: Add tests for click output
 class TestAdobeMobileSdkPlugin(object):
     def test_plugin_properties_name_desc(self):
-        plugin = AdobeMobileSdkPlugin({}, True, False)
+        plugin = AdobeMobileSdkPlugin({}, is_android=True, is_ios=False, do_online=False)
         assert not plugin.name.startswith('Base')
         assert not plugin.desc.startswith('Base')
 
     def test_plugin_properties_support(self):
         assert AdobeMobileSdkPlugin.supports_android is True
         assert AdobeMobileSdkPlugin.supports_ios is True
+        assert AdobeMobileSdkPlugin.supports_online is False
 
-    def test_check_support_is(self):
-        plugin = AdobeMobileSdkPlugin({}, False, False)
+    def test_is_os_supported(self):
+        plugin = AdobeMobileSdkPlugin({}, is_android=False, is_ios=False, do_online=False)
         assert plugin.is_os_supported() is False
-        plugin = AdobeMobileSdkPlugin({}, True, False)
+        plugin = AdobeMobileSdkPlugin({}, is_android=True, is_ios=False, do_online=False)
         assert plugin.is_os_supported() is True
-        plugin = AdobeMobileSdkPlugin({}, False, True)
+        plugin = AdobeMobileSdkPlugin({}, is_android=False, is_ios=True, do_online=False)
         assert plugin.is_os_supported() is True
-        plugin = AdobeMobileSdkPlugin({}, True, True)
+        plugin = AdobeMobileSdkPlugin({}, is_android=True, is_ios=True, do_online=False)
         assert plugin.is_os_supported() is True
+
+    def test_is_online_testing_supported(self):
+        plugin = AdobeMobileSdkPlugin({}, is_android=False, is_ios=False, do_online=False)
+        assert plugin.is_online_testing_supported() is False
+        plugin = AdobeMobileSdkPlugin({}, is_android=False, is_ios=False, do_online=True)
+        assert plugin.is_online_testing_supported() is False
 
 
 # Tests for the get_paths method

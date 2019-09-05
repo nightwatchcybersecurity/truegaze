@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.4] - pending
+- pending
+
 ## [0.1.3] - 2019-08-31
 - Removed Python 3.5 support
 - Added plugin to check for weak signing keys
