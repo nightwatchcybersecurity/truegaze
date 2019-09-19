@@ -56,8 +56,9 @@ def list_plugins():
 
 
 @cli.command('scan')
-@click.argument('filenames', nargs=-1, type=click.Path(exists=True, dir_okay=False))
-def scan(filenames):
+@click.argument('filenames', required=True, nargs=-1, type=click.Path(exists=True, dir_okay=False))
+@click.option('--online', is_flag=True, help='Run tests that require online access')
+def scan(filenames, online):
     """Scan the provided files for vulnerabilities"""
 
     for filename in filenames:
@@ -90,7 +91,7 @@ def scan(filenames):
         for PLUGIN in ACTIVE_PLUGINS:
             click.echo()
             click.echo('Scanning using the "' + PLUGIN.name + '" plugin')
-            instance = PLUGIN(filename, is_android, is_ios)
+            instance = PLUGIN(filename, is_android, is_ios, online)
 
             # Show error if OS is not supported
             # TODO: Add tests
