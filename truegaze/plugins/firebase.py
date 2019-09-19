@@ -29,6 +29,7 @@ import tldextract
 from truegaze.plugins.base import BasePlugin
 
 
+# TODO: Add iOS support
 # Plugin to check for insecure Firebase databases and GCP storage buckets
 class FirebasePlugin(BasePlugin):
     name = 'FirebasePlugin'
@@ -43,55 +44,63 @@ class FirebasePlugin(BasePlugin):
         apk = APK(self.filename)
 
         # Get Firebase URL and derive the bucket name
-        db_url = FirebasePlugin.get_db_url(apk)
-        if db_url:
-            bucket_name = tldextract.extract(db_url).subdomain + '.appspot.com'
-            click.echo('Found Firebase URL: ' + db_url + ', bucket name: ' + bucket_name)
-
-
+        db_name = FirebasePlugin.get_db_name(apk)
+        if db_name:
+            click.echo('Found Firebase database: ' + db_name)
+        else:
+            click.echo('-- No Firebase database found, skipping...')
+            return
 
         # If online check is disabled then skip
         if not self.is_online_testing_supported():
             click.echo('-- Online tests are disabled, skipping check...')
             return
+        else:
+            click.echo('-- Checking if Firebase database and bucket are accessible')
 
-        # Do a GET request to check if the database is accessible
-        res1 = requests.get(db_url + '/.json', stream=True)
+        # Check if the database and bucket are accessible
+        messages = list()
+        messages.append(FirebasePlugin.check_firebase_db(db_name))
+        messages.append(FirebasePlugin.check_bucket(db_name))
+        messages = list(filter(None, messages))
 
-
-        # Do a HEAD request to check if the storage bucket is accessible
-        res2 = requests.head('https://storage.googleapis.com/' + bucket_name)
-        pass
-
-        # unique_certs = WeakKeyPlugin.get_certificates(apk)
-        # if len(unique_certs) == 0:
-        #     click.echo('-- Cannot find the any certificates in the APK File, skipping')
-        #     return
-        #
-        # # Loop through the certificates and check for weak keys
-        # messages = list()
-        # messages.extend(WeakKeyPlugin.check_for_short_keys(unique_certs))
-        # messages.extend(WeakKeyPlugin.check_for_roca(unique_certs))
-        #
-        # # Check for weak DSA signatures
-        # signatures = WeakKeyPlugin.get_signatures(apk)
-        # if len(signatures) > 1:
-        #     messages = WeakKeyPlugin.check_for_weak_signatures(signatures)
-        #
-        # # Show results if needed
-        # if len(messages) > 0:
-        #     click.echo("-- Found " + str(len(messages)) + ' issues')
-        #     for message in messages:
-        #         click.echo(message)
-        # else:
-        #     click.echo("-- No issues found")
+        # Show results if needed
+        if len(messages) > 0:
+            click.echo("-- Found " + str(len(messages)) + ' issues')
+            for message in messages:
+                click.echo(message)
+        else:
+            click.echo("-- No issues found")
 
     # Get the firebase URL from the APK
     # TODO: add tests
     @staticmethod
-    def get_db_url(apk):
+    def get_db_name(apk):
         res = apk.get_android_resources().get_string(apk.package, 'firebase_database_url')
         if res is not None:
-            return res[1]
+            url = res[1]
+            return tldextract.extract(url).subdomain
+
+        return None
+
+    # Check if the Firebase database is accessible
+    # TODO: add tests
+    @staticmethod
+    def check_firebase_db(db_name):
+        url = 'https://' + db_name + '.firebaseio.com/.json'
+        res = requests.get(url, stream=True)
+        if res.status_code == 200:
+            return '---- ISSUE: Unprotected Firebase DB found - ' + url
+
+        return None
+
+    # Check if the bucket is accessible
+    # TODO: add tests
+    @staticmethod
+    def check_bucket(db_name):
+        url = 'https://storage.googleapis.com/' + db_name + '.appspot.com'
+        res = requests.head(url)
+        if res.status_code == 200:
+            return '---- ISSUE: Unprotected bucket found - ' + url
 
         return None

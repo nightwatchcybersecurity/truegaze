@@ -24,13 +24,15 @@
 from truegaze.plugins import ACTIVE_PLUGINS
 from truegaze.plugins.base import BasePlugin
 from truegaze.plugins.adobe_mobile_sdk import AdobeMobileSdkPlugin
+from truegaze.plugins.firebase import FirebasePlugin
 from truegaze.plugins.weak_key import WeakKeyPlugin
 
 
 # Tests for the package itself
 class TestPluginsPackage(object):
     def test_active_plugins(self):
-        assert len(ACTIVE_PLUGINS) == 2
+        assert len(ACTIVE_PLUGINS) == 3
         assert BasePlugin not in ACTIVE_PLUGINS
         assert AdobeMobileSdkPlugin in ACTIVE_PLUGINS
+        assert FirebasePlugin in ACTIVE_PLUGINS
         assert WeakKeyPlugin in ACTIVE_PLUGINS
