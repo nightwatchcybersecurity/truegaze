@@ -46,15 +46,18 @@ truegaze scan *.ipa
 Listing modules:
 ```
 user@localhost:~/$ truegaze list
-Total active plugins: 2
-+----------------+------------------------------------------+---------+-------+
-|      Name      |               Description                | Android | iOS   |
-+----------------+------------------------------------------+---------+-------+
-| AdobeMobileSdk | Detection of incorrect SSL configuration |  True   | True  |
-|                |         in the Adobe Mobile SDK          |         |       |
-+----------------+------------------------------------------+---------+-------+
-| WeakKeyPlugin  | Detection of weak Android signing keys   |  True   | False |
-+----------------+------------------------------------------+---------+-------+
+Total active plugins: 3
++----------------+-------------------------------------------+---------+-------+
+|      Name      |               Description                 | Android | iOS   |
++----------------+-------------------------------------------+---------+-------+
+| AdobeMobileSdk | Detection of incorrect SSL configuration  |  True   | True  |
+|                |          in the Adobe Mobile SDK          |         |       |
++----------------+-------------------------------------------+---------+-------+
+| FirebasePlugin | Detection of insecure Firebase databases  |  True   | False |
+|                |          and GCP storage buckets          |         |       |
++----------------+-------------------------------------------+---------+-------+
+| WeakKeyPlugin  |  Detection of weak Android signing keys   |  True   | False |
++----------------+-------------------------------------------+---------+-------+
 ```
 
 Scanning an application:
@@ -77,6 +80,12 @@ Display installed version:
 user@localhost:~/$ truegaze version
 Current version: v0.2
 ```
+
+## Online tests
+Most of the tests are run offline and do not need access to the Internet. In order to run the tests that
+require online access, use the "--online" option. Please use legally.
+
+# Development Information
 
 ## Structure
 The application is command line and will consist of several modules that check for various
