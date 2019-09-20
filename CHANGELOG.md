@@ -1,6 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.5] - In development
+
 ## [0.1.4] - 2019-09-20
 - Added support for online tests
 - Added a plugin to check Firebase database and bucket
