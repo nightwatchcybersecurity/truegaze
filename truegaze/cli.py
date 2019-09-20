@@ -57,7 +57,7 @@ def list_plugins():
 
 @cli.command('scan')
 @click.argument('filenames', required=True, nargs=-1, type=click.Path(exists=True, dir_okay=False))
-@click.option('--online', is_flag=True, help='Run tests that require online access')
+@click.option('--online', is_flag=True, help='Run tests requiring online access - make sure you are doing this legally')
 def scan(filenames, online):
     """Scan the provided files for vulnerabilities"""
 

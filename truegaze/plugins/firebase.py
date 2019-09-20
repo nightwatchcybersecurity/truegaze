@@ -43,20 +43,18 @@ class FirebasePlugin(BasePlugin):
         # Open the file
         apk = APK(self.filename)
 
-        # Get Firebase URL and derive the bucket name
-        db_name = FirebasePlugin.get_db_name(apk)
-        if db_name:
-            click.echo('Found Firebase database: ' + db_name)
-        else:
-            click.echo('-- No Firebase database found, skipping...')
-            return
-
         # If online check is disabled then skip
         if not self.is_online_testing_supported():
             click.echo('-- Online tests are disabled, skipping check...')
             return
+
+        # Get the Firebase URL
+        db_name = FirebasePlugin.get_db_name(apk)
+        if db_name:
+            click.echo('Found Firebase database: ' + db_name + ', checking if the database/bucket are accessible...')
         else:
-            click.echo('-- Checking if Firebase database and bucket are accessible')
+            click.echo('-- No Firebase database found, skipping...')
+            return
 
         # Check if the database and bucket are accessible
         messages = list()
@@ -84,7 +82,6 @@ class FirebasePlugin(BasePlugin):
         return None
 
     # Check if the Firebase database is accessible
-    # TODO: add tests
     @staticmethod
     def check_firebase_db(db_name):
         url = 'https://' + db_name + '.firebaseio.com/.json'
@@ -95,7 +92,6 @@ class FirebasePlugin(BasePlugin):
         return None
 
     # Check if the bucket is accessible
-    # TODO: add tests
     @staticmethod
     def check_bucket(db_name):
         url = 'https://storage.googleapis.com/' + db_name + '.appspot.com'
