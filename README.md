@@ -22,7 +22,7 @@ To download and run manually, do the following:
 ```
 git clone https://github.com/nightwatchcybersecurity/truegaze.git
 cd truegaze
-pip -r requirements.txt
+pip install -r requirements.txt
 python -m truegaze.cli
 ```
 
