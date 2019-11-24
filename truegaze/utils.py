@@ -89,8 +89,7 @@ class TruegazeUtils(object):
                 return None
 
             # Test to make sure some required keys are present
-            if ('CFBundleDisplayName' in plist_dic) and \
-                    ('CFBundleIdentifier' in plist_dic) and \
+            if ('CFBundleIdentifier' in plist_dic) and \
                     ('CFBundleShortVersionString' in plist_dic):
                 return plist_path
 
