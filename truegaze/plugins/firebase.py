@@ -43,20 +43,22 @@ class FirebasePlugin(BasePlugin):
         # Open the file
         apk = APK(self.filename)
 
+
+        # Get the Firebase URL
+        db_name = FirebasePlugin.get_db_name(apk)
+        if db_name and len(db_name) > 0:
+            click.echo('Found Firebase database: ' + db_name)
+        else:
+            click.echo('-- No Firebase database found, skipping...')
+            return
+
         # If online check is disabled then skip
         if not self.is_online_testing_supported():
             click.echo('-- Online tests are disabled, skipping check...')
             return
 
-        # Get the Firebase URL
-        db_name = FirebasePlugin.get_db_name(apk)
-        if db_name:
-            click.echo('Found Firebase database: ' + db_name + ', checking if the database/bucket are accessible...')
-        else:
-            click.echo('-- No Firebase database found, skipping...')
-            return
-
         # Check if the database and bucket are accessible
+        click.echo('-- Checking if the database is accessible...')
         messages = list()
         messages.append(FirebasePlugin.check_firebase_db(db_name))
         messages.append(FirebasePlugin.check_bucket(db_name))
