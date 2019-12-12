@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.1.5] - pending
+## [0.1.5] - 2019-12-11
 - Fixed issue with IPA file detection (#3)
 - Fixed packaging problem
 
