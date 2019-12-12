@@ -13,7 +13,7 @@ setup(
     url='https://github.com/nightwatchcybersecurity/truegaze',
     author='Nightwatch Cybersecurity',
     author_email='research@nightwatchcybersecurity.com',
-    license='GNU',
+    license='Apache',
     packages=find_packages(exclude=["scripts.*", "scripts", "tests.*", "tests"]),
     include_package_data=True,
     install_requires=open('requirements.txt').read().splitlines(),
@@ -30,7 +30,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     project_urls={
         'Bug Reports': 'https://github.com/nightwatchcybersecurity/truegaze/issues',
         'Source': 'https://github.com/nightwatchcybersecurity/truegaze',

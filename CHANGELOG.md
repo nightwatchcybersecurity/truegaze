@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.5] - pending
 - Fixed issue with IPA file detection (#3)
+- Fixed packaging problem
 
 ## [0.1.4] - 2019-09-20
 - Added support for online tests

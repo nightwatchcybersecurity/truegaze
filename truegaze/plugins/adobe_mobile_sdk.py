@@ -25,6 +25,7 @@ import json
 import re
 
 import click
+import pkg_resources
 from jsonschema.validators import validator_for
 
 from truegaze.plugins.base import BasePlugin
@@ -33,6 +34,9 @@ from truegaze.utils import TruegazeUtils
 # Regex pattern for the configuration file
 CONFIG_FILE_PATTERN =\
     re.compile(r'assets/ADBMobileConfig\.json|ADBMobileConfig\.json|.*/ADBMobileConfig\.json')
+
+# Location of the rules file for validation
+RULES_FILE = pkg_resources.resource_filename('truegaze', 'data/adobe_mobile_sdk.schema')
 
 
 #
@@ -105,7 +109,7 @@ class AdobeMobileSdkPlugin(BasePlugin):
     @staticmethod
     def validate(parsed_data):
         # Load the schema
-        schema_file = open('rules/adobe_mobile_sdk.schema', 'r')
+        schema_file = open(RULES_FILE, 'r')
         schema_data = json.load(schema_file)
 
         # Validate the file
