@@ -12,9 +12,11 @@ language: python
 jobs:
   include:
     - stage: unit_test
-      os:
-        - linux
-        - osx
+      python:
+        - "3.6"
+        - "3.7"
+        - "3.8"
+        - "nightly"
       install:
         - pip install codecov
         - pip install -r requirements.txt
@@ -24,9 +26,11 @@ jobs:
         - codecov
 
     - stage: build_test
-      os:
-        - linux
-        - osx
+      python:
+        - "3.6"
+        - "3.7"
+        - "3.8"
+        - "nightly"
       install:
         - pip install -r requirements.txt
       script:
