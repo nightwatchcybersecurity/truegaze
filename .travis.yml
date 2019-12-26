@@ -7,6 +7,9 @@ stages:
 # Disable sudo to speed up the build
 sudo: false
 language: python
+os:
+  - linux
+  - osx
 python:
   - "3.6"
   - "3.7"
