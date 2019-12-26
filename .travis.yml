@@ -6,24 +6,21 @@ stages:
 # Default settings for all jobs
 # Disable sudo to speed up the build
 sudo: false
-dist: xenial
 language: python
-python:
-  - "3.6"
-  - "3.7"
-  - "3.8"
-  - "nightly"
-
-# Multiple OSes
-os:
-  - linux
-  - osx
-  - windows
 
 # Actual jobs
 jobs:
   include:
     - stage: unit_test
+      python:
+        - "3.6"
+        - "3.7"
+        - "3.8"
+        - "nightly"
+      os:
+        - linux
+        - osx
+        - windows
       install:
         - pip install codecov
         - pip install -r requirements.txt
@@ -33,6 +30,15 @@ jobs:
         - codecov
 
     - stage: build_test
+      python:
+        - "3.6"
+        - "3.7"
+        - "3.8"
+        - "nightly"
+      os:
+        - linux
+        - osx
+        - windows
       install:
         - pip install -r requirements.txt
       script:
