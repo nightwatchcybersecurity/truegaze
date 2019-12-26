@@ -1,3 +1,9 @@
+# Define stages, build the module, then try to install and use
+stages:
+  - unit_test
+  - build_test
+
+# Default settings for all jobs
 # Disable sudo to speed up the build
 sudo: false
 dist: xenial
@@ -5,11 +11,26 @@ language: python
 python:
   - "3.6"
   - "3.7"
+  - "3.8"
   - "nightly"
-install:
-  - pip install codecov
-  - pip install -r requirements.txt
-script:
-  - python -m pytest --cov=truegaze/
-after_success:
-  - codecov
+
+# Actual jobs
+jobs:
+  include:
+    - stage: unit_test
+      install:
+        - pip install codecov
+        - pip install -r requirements.txt
+      script:
+        - python -m pytest --cov=truegaze/
+      after_success:
+        - codecov
+
+    - stage: build_test
+      install:
+        - pip install -r requirements.txt
+      script:
+        - python setup.py sdist bdist_wheel
+        - pip install dist/truegaze-*.whl
+        - truegaze scan test_data/helloworld.apk
+        - truegaze scan test_data/helloworld.ipa
