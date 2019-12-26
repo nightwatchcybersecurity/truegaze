@@ -14,6 +14,12 @@ python:
   - "3.8"
   - "nightly"
 
+# Multiple OSes
+os:
+  - linux
+  - osx
+  - windows
+
 # Actual jobs
 jobs:
   include:
