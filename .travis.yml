@@ -8,21 +8,13 @@ stages:
 sudo: false
 language: python
 
-matrix:
-  include:
-    - os:
-      - linux
-      - osx
-    - python:
-      - "3.6"
-      - "3.7"
-      - "3.8"
-      - "nightly"
-
 # Actual jobs
 jobs:
   include:
     - stage: unit_test
+      os:
+        - linux
+        - osx
       install:
         - pip install codecov
         - pip install -r requirements.txt
@@ -32,6 +24,9 @@ jobs:
         - codecov
 
     - stage: build_test
+      os:
+        - linux
+        - osx
       install:
         - pip install -r requirements.txt
       script:
