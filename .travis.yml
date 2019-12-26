@@ -1,8 +1,3 @@
-# Define stages, build the module, then try to install and use
-stages:
-  - unit_test
-  - build_test
-
 # Default settings for all jobs
 # Disable sudo to speed up the build
 sudo: false
@@ -25,18 +20,11 @@ install:
 
 # Actual job
 script:
-  - echo [Running unit tests]
   - python -m pytest --cov=truegaze/
-
-  - echo [Building module]
   - python setup.py sdist bdist_wheel
-
-  - echo [Installing module]
   - pip install dist/truegaze-*.whl
-
-  - echo [Testing installed module]
-  - truegaze scan test_data/helloworld.apk
-  - truegaze scan test_data/helloworld.ipa
+  - zip empty.zip LICENSE
+  - truegaze scan empty.zip
 
 # Code coverage
 after_success:
