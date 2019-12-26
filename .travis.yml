@@ -25,16 +25,15 @@ install:
 
 # Actual job
 script:
-  - echo
   - echo [Running unit tests]
   - python -m pytest --cov=truegaze/
-  - echo
+
   - echo [Building module]
   - python setup.py sdist bdist_wheel
-  - echo
+
   - echo [Installing module]
   - pip install dist/truegaze-*.whl
-  - echo
+
   - echo [Testing installed module]
   - truegaze scan test_data/helloworld.apk
   - truegaze scan test_data/helloworld.ipa
