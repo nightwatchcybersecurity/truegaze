@@ -7,6 +7,9 @@ stages:
 # Disable sudo to speed up the build
 sudo: false
 language: python
+os:
+  - linux
+  - osx
 python:
   - "3.6"
   - "3.7"
@@ -17,9 +20,6 @@ python:
 jobs:
   include:
     - stage: unit_test
-      os:
-        - linux
-        - osx
       install:
         - pip install codecov
         - pip install -r requirements.txt
@@ -29,9 +29,6 @@ jobs:
         - codecov
 
     - stage: build_test
-      os:
-        - linux
-        - osx
       install:
         - pip install -r requirements.txt
       script:
