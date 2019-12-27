@@ -24,8 +24,8 @@ script:
   - python -m pytest --cov=truegaze/
   - python setup.py sdist bdist_wheel
   - pip install dist/truegaze-*.whl
-  - zip empty.zip LICENSE
-  - truegaze scan empty.zip
+  - truegaze scan test_data/helloworld.apk
+  - truegaze scan test_data/helloworld.ipa
 
 # Code coverage
 after_success:
