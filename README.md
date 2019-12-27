@@ -1,6 +1,6 @@
 # truegaze
 [![PyPI version](https://badge.fury.io/py/truegaze.svg)](https://badge.fury.io/py/truegaze)
-[![Build Status](https://github.com/actions/nightwatchcybersecurity/truegaze/workflows/ci/badge.svg?branch=master)](https://github.com/nightwatchcybersecurity/truegaze/actions)
+[![Build Status](https://github.com/nightwatchcybersecurity/truegaze/workflows/Test%20package/badge.svg?branch=master)](https://github.com/nightwatchcybersecurity/truegaze/actions)
 [![codecov](https://codecov.io/gh/nightwatchcybersecurity/truegaze/branch/master/graph/badge.svg)](https://codecov.io/gh/nightwatchcybersecurity/truegaze)
 ![GitHub](https://img.shields.io/github/license/nightwatchcybersecurity/truegaze.svg)
 
