@@ -4,9 +4,10 @@ sudo: false
 language: python
 
 # Matrix of jobs
-os:
-  - linux
-  - osx
+#os:
+#  - linux
+#  - osx
+#  - windows
 python:
   - "3.6"
   - "3.7"
