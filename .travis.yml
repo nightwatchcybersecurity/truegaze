@@ -1,15 +1,32 @@
+# Default settings for all jobs
 # Disable sudo to speed up the build
 sudo: false
-dist: xenial
 language: python
+
+# Matrix of jobs
+#os:
+#  - linux
+#  - osx
+#  - windows
 python:
   - "3.6"
   - "3.7"
+  - "3.8"
   - "nightly"
+
+# Installation requirements
 install:
   - pip install codecov
   - pip install -r requirements.txt
+
+# Actual job
 script:
   - python -m pytest --cov=truegaze/
+  - python setup.py sdist bdist_wheel
+  - pip install dist/truegaze-*.whl
+  - truegaze scan test_data/helloworld.apk
+  - truegaze scan test_data/helloworld.ipa
+
+# Code coverage
 after_success:
   - codecov
