@@ -29,7 +29,7 @@ jobs:
         codecov
     - name: Test package build and install
       run: |
-        python setup.py sdist bdist_wheel
+        python setup.py build sdist bdist_wheel
         pip install dist/truegaze-*.whl
         truegaze scan test_data/helloworld.apk
         truegaze scan test_data/helloworld.ipa
