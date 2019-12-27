@@ -12,6 +12,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
+    - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
@@ -21,7 +22,6 @@ jobs:
         pip install codecov
         pip install -r requirements.txt
     - name: Run unit tests
-      uses: actions/checkout@v1
       run: |
         python -m pytest --cov=truegaze/ --cov-report=xml
         codecov
