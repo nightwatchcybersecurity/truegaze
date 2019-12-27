@@ -21,7 +21,7 @@ jobs:
         pip install codecov
         pip install -r requirements.txt
     - name: Run unit tests
-    - uses: actions/checkout@v1
+      uses: actions/checkout@v1
       run: |
         python -m pytest --cov=truegaze/ --cov-report=xml
         codecov
