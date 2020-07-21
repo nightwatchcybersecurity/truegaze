@@ -81,8 +81,8 @@ user@localhost:~/$ truegaze version
 Current version: v0.2
 ```
 
-## Online tests
-Most of the tests are run offline and do not need access to the Internet. In order to run the tests that
+## Online scans
+Most of the scans are run offline and do not need access to the Internet. In order to run the scans that
 require online access, use the "--online" option. Please use legally.
 
 # Development Information
