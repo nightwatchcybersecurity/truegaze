@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.6] - 2020-07-20
+- Merged fix for bug with array lookups (#7)
+- Update dependencies
+
 ## [0.1.5] - 2019-12-11
 - Fixed issue with IPA file detection (#3)
 - Fixed packaging problem
