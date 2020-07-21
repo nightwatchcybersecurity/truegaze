@@ -101,13 +101,13 @@ class WeakKeyPlugin(BasePlugin):
         if apk._is_signed_v2:
             certs_v2 = apk.get_certificates_v2()
             for x in range(len(certs_v2)):
-                if certs_v2[x].public_key.algorithm == 'dsa' or certs_v1[x].public_key.algorithm == 'ecdsa':
+                if certs_v2[x].public_key.algorithm == 'dsa' or certs_v2[x].public_key.algorithm == 'ecdsa':
                     signatures.append(apk._v2_signing_data[x].signatures[0][1])
 
         if apk._is_signed_v3:
             certs_v3 = apk.get_certificates_v3()
             for x in range(len(certs_v3)):
-                if certs_v3[x].public_key.algorithm == 'dsa' or certs_v1[x].public_key.algorithm == 'ecdsa':
+                if certs_v3[x].public_key.algorithm == 'dsa' or certs_v3[x].public_key.algorithm == 'ecdsa':
                     signatures.append(apk._v3_signing_data[x].signatures[0][1])
 
         return signatures
