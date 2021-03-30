@@ -33,7 +33,7 @@ from truegaze.utils import TruegazeUtils
 
 # Regex pattern for the configuration file
 CONFIG_FILE_PATTERN =\
-    re.compile(r'assets/ADBMobileConfig\.json|ADBMobileConfig\.json|.*/ADBMobileConfig\.json')
+    re.compile(r'(.*/)?ADBMobileConfig(.*)\.json')
 
 # Location of the rules file for validation
 RULES_FILE = pkg_resources.resource_filename('truegaze', 'data/adobe_mobile_sdk.schema')
