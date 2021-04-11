@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.8] - TBD
+- In development
+
 ## [0.1.7] - 2021-04-11
 - Merged a better regex pattern from @dee-see for finding files (#8)
 
