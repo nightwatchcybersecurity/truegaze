@@ -3,7 +3,7 @@
 # pip -r requirements.txt
 
 androguard>=3.3.5
-asn1crypto>=1.3.0
+asn1crypto>=1.4.0
 beautifultable>=1.0.0
 click>=7.1.2
 cryptography>=3.0
