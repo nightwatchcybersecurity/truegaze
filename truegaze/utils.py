@@ -38,7 +38,7 @@ class TruegazeUtils(object):
     @staticmethod
     def get_version():
         """Gets the current version"""
-        return "0.1.6"
+        return "0.1.7"
 
     @staticmethod
     def open_file_as_zip(filename):
