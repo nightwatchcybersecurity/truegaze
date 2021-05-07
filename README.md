@@ -1,8 +1,9 @@
 # truegaze
-[![PyPI version](https://badge.fury.io/py/truegaze.svg)](https://badge.fury.io/py/truegaze)
+![PyPI](https://img.shields.io/pypi/v/truegaze)
 [![Build Status](https://github.com/nightwatchcybersecurity/truegaze/workflows/Test%20package/badge.svg?branch=master)](https://github.com/nightwatchcybersecurity/truegaze/actions)
 [![codecov](https://codecov.io/gh/nightwatchcybersecurity/truegaze/branch/master/graph/badge.svg)](https://codecov.io/gh/nightwatchcybersecurity/truegaze)
 ![GitHub](https://img.shields.io/github/license/nightwatchcybersecurity/truegaze.svg)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/truegaze)
 
 A static analysis tool for Android and iOS applications focusing on security issues outside the
 source code such as resource strings, third party libraries and configuration files.
