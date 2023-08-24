@@ -12,6 +12,6 @@ requests>=2.31.0
 requests_mock>=1.11.0
 pytest>=7.4.0
 pytest-cov>=4.1.0
-tldextract>=4.3.4
+tldextract>=3.4.4
 
 roca-detect==1.2.12
